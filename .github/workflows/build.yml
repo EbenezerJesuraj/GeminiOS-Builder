@@ -1,0 +1,30 @@
+name: Compile Custom GeminiOS ISO
+
+on:
+  workflow_dispatch: # Enables manual trigger button inside your GitHub console
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Pull Repository Files
+      uses: actions/checkout@v4
+
+    - name: Run Arch Linux Core Engine & Compile ISO
+      run: |
+        docker run --privileged -v ${{ github.workspace }}:/workspace archlinux:latest /bin/bash -c "
+          pacman -Syu --noconfirm && \
+          pacman -S --needed --noconfirm archiso git base-devel && \
+          mkdir -p /tmp/archiso && \
+          cp -r /usr/share/archiso/configs/releng/ /tmp/archiso/profile && \
+          chmod +x /workspace/setup_profile.sh && \
+          /workspace/setup_profile.sh /tmp/archiso/profile && \
+          mkarchiso -v -w /tmp/archiso/work -o /workspace/out /tmp/archiso/profile
+        "
+
+    - name: Publish Bootable ISO File Link
+      uses: actions/upload-artifact@v4
+      with:
+        name: GeminiOS-Live-Installer
+        path: out/*.iso
+        retention-days: 3 # Image stays downloadable for 3 days
