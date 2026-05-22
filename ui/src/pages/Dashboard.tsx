@@ -22,6 +22,8 @@ const statCards = [
   { label: "Battery", value: "87%", icon: Battery, color: "#FBBC04" },
 ];
 
+const appleSpring = { type: "spring" as const, stiffness: 240, damping: 28, mass: 0.8 };
+
 function Dashboard() {
   const [status, setStatus] = useState<SystemStatus>(defaultStatus);
   const [time, setTime] = useState(new Date());
@@ -51,30 +53,30 @@ function Dashboard() {
   return (
     <motion.div
       className="page"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+      transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
     >
       {/* Pixel Widgets Row */}
       <div className="pixel-widgets">
-        {/* Clock widget */}
         <motion.div
           className="pixel-widget widget-clock"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          initial={{ opacity: 0, y: 16, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ ...appleSpring, delay: 0.1 }}
+          whileHover={{ scale: 1.03, y: -2 }}
         >
           <div className="clock-time">{formatTime(time)}</div>
           <div className="clock-date">{formatDate(time)}</div>
         </motion.div>
 
-        {/* Weather widget */}
         <motion.div
           className="pixel-widget widget-weather"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          initial={{ opacity: 0, y: 16, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ ...appleSpring, delay: 0.16 }}
+          whileHover={{ scale: 1.03, y: -2 }}
         >
           <span className="weather-icon-3d">☀️</span>
           <div className="weather-info">
@@ -83,12 +85,12 @@ function Dashboard() {
           </div>
         </motion.div>
 
-        {/* AI at-a-glance widget */}
         <motion.div
           className="pixel-widget widget-ai-glance"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 16, scale: 0.92 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ ...appleSpring, delay: 0.22 }}
+          whileHover={{ scale: 1.03, y: -2 }}
         >
           <div className="ai-glance-icon"><Sparkles size={18} /></div>
           <div className="ai-glance-text">
@@ -104,9 +106,11 @@ function Dashboard() {
           <motion.div
             key={card.label}
             className="dashboard-card"
-            initial={{ opacity: 0, y: 16, rotateX: 6 }}
-            animate={{ opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ delay: 0.25 + i * 0.06, type: "spring", stiffness: 300, damping: 25 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ ...appleSpring, delay: 0.28 + i * 0.07 }}
+            whileHover={{ scale: 1.04, y: -3 }}
+            whileTap={{ scale: 0.97 }}
           >
             <card.icon size={22} style={{ color: card.color, position: "relative", zIndex: 1 }} />
             <div className="card-content">
@@ -118,26 +122,38 @@ function Dashboard() {
       </div>
 
       {/* Agents */}
-      <div className="dashboard-section">
+      <motion.div
+        className="dashboard-section"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...appleSpring, delay: 0.5 }}
+      >
         <h2>AI Agents</h2>
         <div className="agents-grid">
           {agentEntries.map(([name, healthy], i) => (
             <motion.span
               key={name}
               className="agent-badge"
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 + i * 0.04 }}
+              transition={{ ...appleSpring, delay: 0.55 + i * 0.04 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
             >
               <span className={`agent-dot ${healthy ? "healthy" : "unhealthy"}`} />
               {name}
             </motion.span>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* LLM Engine */}
-      <div className="dashboard-section">
+      <motion.div
+        className="dashboard-section"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ ...appleSpring, delay: 0.65 }}
+      >
         <h2>AI Engine</h2>
         <div className="llm-status-card">
           <div className="llm-indicator">
@@ -148,7 +164,7 @@ function Dashboard() {
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

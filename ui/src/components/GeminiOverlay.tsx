@@ -15,6 +15,10 @@ const suggestions = [
   { icon: Code, label: "Write a Python script" },
 ];
 
+/* Apple-style spring: slightly bouncy, smooth deceleration */
+const appleSpring = { type: "spring" as const, stiffness: 240, damping: 28, mass: 0.8 };
+const appleOverlay = { duration: 0.35, ease: [0.32, 0.72, 0, 1] as const };
+
 interface GeminiOverlayProps {
   onClose: () => void;
 }
@@ -70,54 +74,88 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
   return (
     <motion.div
       className="gemini-overlay"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      animate={{ opacity: 1, backdropFilter: "blur(24px)" }}
+      exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+      transition={appleOverlay}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
         className="gemini-panel"
-        initial={{ scale: 0.88, opacity: 0, rotateX: 8 }}
-        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-        exit={{ scale: 0.88, opacity: 0, rotateX: -8 }}
-        transition={{ type: "spring", stiffness: 300, damping: 26 }}
+        initial={{ scale: 0.82, opacity: 0, y: 40 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.85, opacity: 0, y: 30 }}
+        transition={appleSpring}
       >
         {/* Header */}
         <div className="gemini-panel-header">
           <div className="gemini-header-left">
-            <div className="gemini-header-icon"><Sparkles size={16} /></div>
+            <motion.div
+              className="gemini-header-icon"
+              initial={{ rotate: -90, scale: 0 }}
+              animate={{ rotate: 0, scale: 1 }}
+              transition={{ ...appleSpring, delay: 0.15 }}
+            >
+              <Sparkles size={16} />
+            </motion.div>
             Gemini
           </div>
-          <button className="gemini-close-btn" onClick={onClose}><X size={16} /></button>
+          <motion.button
+            className="gemini-close-btn"
+            onClick={onClose}
+            whileHover={{ scale: 1.15, rotate: 90 }}
+            whileTap={{ scale: 0.85 }}
+            transition={appleSpring}
+          >
+            <X size={16} />
+          </motion.button>
         </div>
 
         {/* Messages */}
         <div className="gemini-messages">
           {messages.length === 0 && (
-            <div className="gemini-welcome">
-              <div className="gemini-welcome-icon"><Sparkles size={32} /></div>
+            <motion.div
+              className="gemini-welcome"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...appleSpring, delay: 0.2 }}
+            >
+              <motion.div
+                className="gemini-welcome-icon"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ ...appleSpring, delay: 0.3 }}
+              >
+                <Sparkles size={32} />
+              </motion.div>
               <h2>Hi, I'm Gemini</h2>
               <p>Your AI assistant across Gemini OS</p>
               <div className="gemini-suggestions">
-                {suggestions.map((s) => (
-                  <button
+                {suggestions.map((s, i) => (
+                  <motion.button
                     key={s.label}
                     className="suggestion-chip"
                     onClick={() => sendMessage(s.label)}
+                    initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ ...appleSpring, delay: 0.35 + i * 0.06 }}
+                    whileHover={{ scale: 1.06, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <s.icon size={14} /> {s.label}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {messages.map((msg) => (
             <motion.div
               key={msg.id}
               className={`gemini-msg ${msg.role}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 10, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={appleSpring}
             >
               {msg.role === "gemini" && (
                 <div className="gemini-msg-avatar"><Sparkles size={12} /></div>
@@ -138,7 +176,12 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
         </div>
 
         {/* Input */}
-        <div className="gemini-input-bar">
+        <motion.div
+          className="gemini-input-bar"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...appleSpring, delay: 0.25 }}
+        >
           <input
             className="gemini-input"
             type="text"
@@ -147,15 +190,23 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
             onKeyDown={handleKeyDown}
             placeholder="Ask Gemini anything..."
           />
-          <button className="gemini-voice-btn"><Mic size={18} /></button>
-          <button
+          <motion.button
+            className="gemini-voice-btn"
+            whileHover={{ scale: 1.12 }}
+            whileTap={{ scale: 0.88 }}
+          >
+            <Mic size={18} />
+          </motion.button>
+          <motion.button
             className="gemini-send-btn"
             onClick={() => sendMessage()}
-            disabled={!input.trim() || isTyping}
+            disabled={!input.trim()}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.88 }}
           >
             <Send size={16} />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </motion.div>
     </motion.div>
   );

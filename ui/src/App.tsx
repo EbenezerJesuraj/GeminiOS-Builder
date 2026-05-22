@@ -1,12 +1,10 @@
-import { useState, useCallback, lazy, Suspense, memo } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense, memo } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Dock from "./components/Dock";
 import DynamicWallpaper from "./components/DynamicWallpaper";
 import AIActivityOrb from "./components/AIActivityOrb";
 
-/* Lazy-load pages — only loaded when navigated to.
- * Reduces initial JS bundle and RAM footprint (macOS-style resource mgmt). */
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const GeminiShell = lazy(() => import("./pages/GeminiShell"));
 const SelfEvolve = lazy(() => import("./pages/SelfEvolve"));
@@ -25,6 +23,17 @@ function App() {
 
   const toggleGemini = useCallback(() => setGeminiOpen((v) => !v), []);
   const closeGemini = useCallback(() => setGeminiOpen(false), []);
+
+  useEffect(() => {
+    const enterFullscreen = () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      }
+    };
+    const handler = () => enterFullscreen();
+    document.addEventListener("click", handler, { once: true });
+    return () => document.removeEventListener("click", handler);
+  }, []);
 
   return (
     <div className="desktop-container">
