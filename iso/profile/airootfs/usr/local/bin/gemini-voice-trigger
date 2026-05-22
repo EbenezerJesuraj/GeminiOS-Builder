@@ -1,0 +1,49 @@
+#!/bin/bash
+# ============================================================
+# Gemini Voice — Voice Command Trigger
+# Bound to Super+A
+# Records audio, transcribes via Whisper, sends to orchestrator
+# ============================================================
+
+RECORDING_FILE="/tmp/gemini-voice-recording.wav"
+API_URL="http://127.0.0.1:8420/api/v1/chat"
+
+# Notify user
+notify-send -a "Gemini OS" "Voice Assistant" "Listening..." \
+    -t 3000 -u low 2>/dev/null
+
+# Record 5 seconds of audio
+arecord -f cd -t wav -d 5 "$RECORDING_FILE" 2>/dev/null
+
+# Transcribe using Whisper (via Ollama or local)
+if command -v whisper > /dev/null 2>&1; then
+    TRANSCRIPT=$(whisper "$RECORDING_FILE" --model tiny --output_format txt 2>/dev/null | cat)
+elif command -v ollama > /dev/null 2>&1; then
+    TRANSCRIPT=$(echo "Transcribe this audio" | ollama run whisper 2>/dev/null)
+else
+    notify-send -a "Gemini OS" "Voice Assistant" \
+        "Whisper not available. Install via: ollama pull whisper" \
+        -t 5000 -u normal 2>/dev/null
+    exit 1
+fi
+
+if [ -n "$TRANSCRIPT" ]; then
+    # Send transcription to orchestrator
+    RESPONSE=$(curl -s -X POST "$API_URL" \
+        -H "Content-Type: application/json" \
+        -d "{\"message\": \"$TRANSCRIPT\"}" 2>/dev/null)
+
+    AI_REPLY=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin).get('response','No response'))" 2>/dev/null)
+
+    notify-send -a "Gemini OS" "Voice Assistant" \
+        "You said: $TRANSCRIPT\n\nAI: $AI_REPLY" \
+        -t 8000 -u normal 2>/dev/null
+
+    # Text-to-speech response (if Piper is available)
+    if command -v piper > /dev/null 2>&1; then
+        echo "$AI_REPLY" | piper --model en_US-lessac-medium --output_file /tmp/gemini-tts.wav 2>/dev/null
+        aplay /tmp/gemini-tts.wav 2>/dev/null &
+    fi
+fi
+
+rm -f "$RECORDING_FILE"

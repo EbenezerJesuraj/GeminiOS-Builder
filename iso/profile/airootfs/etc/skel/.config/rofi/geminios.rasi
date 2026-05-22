@@ -1,0 +1,63 @@
+/* ============================================================
+ * Gemini OS — Rofi Theme (Fallback Launcher)
+ * ============================================================ */
+
+* {
+    bg: rgba(15, 15, 25, 0.88);
+    fg: #dce4f0;
+    accent: #00c8ff;
+    urgent: #ff4444;
+    border-color: rgba(100, 180, 255, 0.25);
+
+    background-color: transparent;
+    text-color: @fg;
+    font: "JetBrainsMono Nerd Font 13";
+}
+
+window {
+    width: 520px;
+    background-color: @bg;
+    border: 1px solid;
+    border-color: @border-color;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+inputbar {
+    background-color: rgba(30, 30, 50, 0.6);
+    border-radius: 12px;
+    padding: 10px 16px;
+    spacing: 10px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "Search apps...";
+    placeholder-color: rgba(220, 228, 240, 0.35);
+}
+
+listview {
+    lines: 6;
+    fixed-height: true;
+    spacing: 4px;
+    padding: 8px 0 0;
+}
+
+element {
+    padding: 8px 14px;
+    border-radius: 10px;
+    spacing: 10px;
+}
+
+element selected {
+    background-color: rgba(0, 200, 255, 0.14);
+    text-color: @accent;
+}
+
+element-icon {
+    size: 24px;
+}

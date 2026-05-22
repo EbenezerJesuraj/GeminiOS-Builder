@@ -1,0 +1,14 @@
+[Unit]
+Description=Gemini OS — Voice Assistant Service
+After=pipewire.service gemini-orchestrator.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "echo 'Gemini Voice service ready. Trigger via Super+A.'"
+WorkingDirectory=/usr/lib/geminios
+Restart=on-failure
+RestartSec=10
+Environment=PYTHONPATH=/usr/lib/geminios
+
+[Install]
+WantedBy=multi-user.target

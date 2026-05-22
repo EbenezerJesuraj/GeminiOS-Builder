@@ -1,0 +1,16 @@
+#!/bin/bash
+# ============================================================
+# Gemini Shell Toggle — Show/Hide the AI Shell
+# Bound to Super+Space
+# ============================================================
+
+SHELL_CLASS="gemini-shell"
+
+# Check if gemini-shell window exists
+if hyprctl clients -j 2>/dev/null | grep -q "$SHELL_CLASS"; then
+    # Toggle visibility
+    hyprctl dispatch togglespecialworkspace gemini-shell
+else
+    # Launch it
+    /usr/local/bin/gemini-shell &
+fi

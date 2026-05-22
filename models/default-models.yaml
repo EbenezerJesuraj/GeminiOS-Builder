@@ -1,0 +1,37 @@
+# Gemini OS — Default Model Configuration
+# These models are pulled during post-install
+
+models:
+  - name: gemma3:2b
+    purpose: assistant
+    backend: ollama
+    priority: 90
+    description: "General-purpose AI assistant"
+    auto_pull: true
+
+  - name: deepseek-coder:6.7b
+    purpose: coding
+    backend: ollama
+    priority: 80
+    description: "Code generation and debugging"
+    auto_pull: false
+
+  - name: llava:7b
+    purpose: vision
+    backend: ollama
+    priority: 70
+    description: "Image understanding and description"
+    auto_pull: false
+
+  - name: qwen:7b
+    purpose: planning
+    backend: ollama
+    priority: 75
+    description: "Task planning and workflow generation"
+    auto_pull: false
+
+cloud_fallback:
+  provider: gemini
+  model: gemini-pro
+  enabled: true
+  requires_api_key: true

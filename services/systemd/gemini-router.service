@@ -1,0 +1,15 @@
+[Unit]
+Description=Gemini OS — AI Task Router
+After=gemini-orchestrator.service
+Requires=gemini-orchestrator.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -m orchestrator.src.orchestrator
+WorkingDirectory=/usr/lib/geminios
+Restart=always
+RestartSec=5
+Environment=PYTHONPATH=/usr/lib/geminios
+
+[Install]
+WantedBy=multi-user.target

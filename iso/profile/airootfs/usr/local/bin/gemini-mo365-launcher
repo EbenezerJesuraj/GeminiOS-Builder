@@ -1,0 +1,48 @@
+#!/bin/bash
+# ============================================================
+# Gemini MO365 Launcher — Microsoft 365 Native Integration
+# Launches MO365 apps as Chromium webapps
+# ============================================================
+
+MO365_PROFILE="$HOME/.config/geminios/mo365-profile"
+mkdir -p "$MO365_PROFILE"
+
+APP="${1:-hub}"
+
+case "$APP" in
+    word)
+        URL="https://www.office.com/launch/word"
+        CLASS="gemini-mo365-word"
+        ;;
+    excel)
+        URL="https://www.office.com/launch/excel"
+        CLASS="gemini-mo365-excel"
+        ;;
+    powerpoint|ppt)
+        URL="https://www.office.com/launch/powerpoint"
+        CLASS="gemini-mo365-ppt"
+        ;;
+    outlook|mail)
+        URL="https://outlook.office.com"
+        CLASS="gemini-mo365-outlook"
+        ;;
+    onedrive)
+        URL="https://onedrive.live.com"
+        CLASS="gemini-mo365-onedrive"
+        ;;
+    teams)
+        URL="https://teams.microsoft.com"
+        CLASS="gemini-mo365-teams"
+        ;;
+    hub|*)
+        URL="https://www.office.com"
+        CLASS="gemini-mo365-hub"
+        ;;
+esac
+
+exec chromium \
+    --app="$URL" \
+    --class="$CLASS" \
+    --user-data-dir="$MO365_PROFILE" \
+    --enable-features=OverlayScrollbar \
+    --disable-background-timer-throttling
