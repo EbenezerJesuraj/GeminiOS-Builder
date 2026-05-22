@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.env
+*.log
+dist/
+build/
+*.egg-info/
+
+# Local extraction/debug artifacts from shared planning sources
+share.html
+chunk.txt
+conversation_extracted.md
+blueprint_extracted.txt
+
+# ISO outputs
+*.iso
+iso-output/
+work/

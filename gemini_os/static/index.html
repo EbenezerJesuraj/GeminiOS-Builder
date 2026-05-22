@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Archon OS Control Plane</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <nav class="topbar glass">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <div>
+            <strong>Archon OS</strong>
+            <span>Gemini-native control plane</span>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a href="/docs">API Docs</a>
+          <span id="health-pill" class="status-pill">Checking</span>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI-native Linux platform</p>
+          <h1>Fluid orchestration for a self-optimizing OS.</h1>
+          <p>
+            One frosted surface for agents, install planning, resource control, network policy,
+            battery intelligence, and Google ecosystem readiness.
+          </p>
+          <div class="hero-actions">
+            <button id="run-evaluation" class="primary-button">Run AI Evaluation</button>
+            <button id="plan-install" class="secondary-button">Plan Install</button>
+          </div>
+        </div>
+        <div class="orbital glass">
+          <div class="pulse-ring"></div>
+          <div class="core-node">AI</div>
+          <span class="orbit orbit-a">Resource</span>
+          <span class="orbit orbit-b">Network</span>
+          <span class="orbit orbit-c">Battery</span>
+          <span class="orbit orbit-d">Installer</span>
+        </div>
+      </section>
+
+      <section class="phase-strip glass">
+        <article>
+          <span>01</span>
+          <strong>Foundation OS</strong>
+          <p>ArchISO, Hyprland, Calamares, hardware detection.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <strong>AI Runtime</strong>
+          <p>Ollama, Gemini bridge, local/cloud model routing.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <strong>Infrastructure</strong>
+          <p>Battery, network, thermal, memory, resource agents.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <strong>Smart UI</strong>
+          <p>Dashboard, voice, semantic launcher, predictive UI.</p>
+        </article>
+        <article>
+          <span>05</span>
+          <strong>Google Core</strong>
+          <p>Gemini, Drive, Gmail, Calendar, Firebase, Vertex AI.</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel glass">
+          <div class="section-heading">
+            <p>Agents</p>
+            <h2>Autonomous OS services</h2>
+          </div>
+          <div id="agent-grid" class="agent-grid"></div>
+        </div>
+
+        <div class="panel glass telemetry-panel">
+          <div class="section-heading">
+            <p>Telemetry</p>
+            <h2>Scenario input</h2>
+          </div>
+          <div class="metric-list">
+            <label>CPU <input id="cpu" type="range" min="0" max="100" value="91" /></label>
+            <label>Memory <input id="memory" type="range" min="0" max="100" value="84" /></label>
+            <label>Disk <input id="disk" type="range" min="0" max="100" value="72" /></label>
+            <label>Battery <input id="battery" type="range" min="0" max="100" value="28" /></label>
+            <label>Latency <input id="latency" type="range" min="0" max="350" value="190" /></label>
+          </div>
+        </div>
+
+        <div class="panel glass output-panel">
+          <div class="section-heading">
+            <p>Orchestrator</p>
+            <h2>Recommended actions</h2>
+          </div>
+          <div id="output" class="output-empty">Run an evaluation to populate agent decisions.</div>
+        </div>
+
+        <div class="panel glass">
+          <div class="section-heading">
+            <p>Google Integration</p>
+            <h2>Core services readiness</h2>
+          </div>
+          <div id="google-grid" class="google-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
