@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 
 const dockApps = [
-  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4" },
-  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853" },
-  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4" },
-  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04" },
-  { path: "/agents", icon: Bot, label: "Agents", color: "#4285F4" },
-  { path: "/evolve", icon: Dna, label: "Evolve", color: "#EA4335" },
-  { path: "/settings", icon: Settings, label: "Settings", color: "#8E8698" },
+  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4", bg: "rgba(66,133,244,0.12)" },
+  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853", bg: "rgba(52,168,83,0.12)" },
+  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4", bg: "rgba(161,66,244,0.12)" },
+  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04", bg: "rgba(251,188,4,0.14)" },
+  { path: "/agents", icon: Bot, label: "Agents", color: "#4285F4", bg: "rgba(66,133,244,0.12)" },
+  { path: "/evolve", icon: Dna, label: "Evolve", color: "#EA4335", bg: "rgba(234,67,53,0.12)" },
+  { path: "/settings", icon: Settings, label: "Settings", color: "#9C8872", bg: "rgba(156,136,114,0.10)" },
 ];
 
 const ICON_SIZE = 48;
@@ -73,18 +73,15 @@ function DockItem({ app, isActive, mouseX, onClick, index }: DockItemProps) {
           width: size,
           height: size,
           willChange: "width, height, transform",
-          ...(isActive
-            ? {
-                background: `${app.color}18`,
-                borderColor: `${app.color}30`,
-                boxShadow: `0 0 20px ${app.color}25`,
-              }
-            : {}),
+          background: isActive ? `${app.color}20` : app.bg,
+          borderColor: isActive ? `${app.color}35` : "transparent",
+          boxShadow: isActive ? `0 0 16px ${app.color}18` : "none",
+          borderRadius: "var(--r-lg)",
         }}
       >
         <app.icon
           size={22}
-          style={{ color: isActive ? app.color : "#C4BCD0" }}
+          style={{ color: isActive ? app.color : "#6B5744" }}
         />
       </motion.div>
 

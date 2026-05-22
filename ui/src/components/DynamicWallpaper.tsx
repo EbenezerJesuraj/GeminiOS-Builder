@@ -30,40 +30,40 @@ function codeToCondition(code: number): string {
 
 const gradientMap: Record<string, Record<string, string>> = {
   clear: {
-    dawn: "linear-gradient(135deg, #1a1035 0%, #4a2068 25%, #e85d75 55%, #ffb347 100%)",
-    day: "linear-gradient(135deg, #0a1628 0%, #1a3a6c 30%, #4285F4 60%, #87CEEB 100%)",
-    dusk: "linear-gradient(135deg, #0d1b2a 0%, #3d1f54 30%, #e74c3c 60%, #f39c12 100%)",
-    night: "linear-gradient(135deg, #030712 0%, #0a1628 30%, #1a1040 60%, #2d1b69 100%)",
+    dawn: "linear-gradient(135deg, #FFF0DB 0%, #FFD4A8 25%, #FFAB76 55%, #FF8A65 100%)",
+    day: "linear-gradient(135deg, #FFF8F0 0%, #FFE8CC 30%, #FFDDB0 60%, #E3F2FD 100%)",
+    dusk: "linear-gradient(135deg, #FFF0DB 0%, #FFCC80 30%, #FF8A65 60%, #E1BEE7 100%)",
+    night: "linear-gradient(135deg, #F5EBE0 0%, #EFCFB0 30%, #E0C4A8 60%, #D7CCC8 100%)",
   },
   cloudy: {
-    dawn: "linear-gradient(135deg, #1a1035 0%, #3d2852 30%, #7b6b8a 60%, #b8a9c9 100%)",
-    day: "linear-gradient(135deg, #1c2333 0%, #2d3748 30%, #4a5568 60%, #718096 100%)",
-    dusk: "linear-gradient(135deg, #1a1035 0%, #3d2145 30%, #8b5a6b 60%, #c97b7b 100%)",
-    night: "linear-gradient(135deg, #0a0e1a 0%, #1a1f2e 30%, #2a2f3e 60%, #3a3f4e 100%)",
+    dawn: "linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 30%, #E0D5C8 60%, #D7CCC8 100%)",
+    day: "linear-gradient(135deg, #FAFAFA 0%, #F0EAE0 30%, #E8DDD0 60%, #D7CCC8 100%)",
+    dusk: "linear-gradient(135deg, #FFF0DB 0%, #E8D5C4 30%, #D7B8A0 60%, #BCAAA4 100%)",
+    night: "linear-gradient(135deg, #EFEBE9 0%, #E0D5C8 30%, #D7CCC8 60%, #BCAAA4 100%)",
   },
   rain: {
-    dawn: "linear-gradient(135deg, #0d1117 0%, #1a2332 30%, #2c3e50 60%, #546e7a 100%)",
-    day: "linear-gradient(135deg, #0d1b2a 0%, #1b2838 30%, #2c3e50 60%, #4a6274 100%)",
-    dusk: "linear-gradient(135deg, #0a0e1a 0%, #1a1f30 30%, #2d3040 60%, #4a4050 100%)",
-    night: "linear-gradient(135deg, #050810 0%, #0d1117 30%, #1a1f2e 60%, #252a39 100%)",
+    dawn: "linear-gradient(135deg, #E8EAF6 0%, #C5CAE9 30%, #B0BEC5 60%, #90A4AE 100%)",
+    day: "linear-gradient(135deg, #ECEFF1 0%, #CFD8DC 30%, #B0BEC5 60%, #90A4AE 100%)",
+    dusk: "linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 30%, #BCAAA4 60%, #A1887F 100%)",
+    night: "linear-gradient(135deg, #E0D5C8 0%, #D7CCC8 30%, #BCAAA4 60%, #A1887F 100%)",
   },
   snow: {
-    dawn: "linear-gradient(135deg, #1a1f3a 0%, #3a3f6a 30%, #6a6f9a 60%, #b0b5d5 100%)",
-    day: "linear-gradient(135deg, #1e2a40 0%, #344a68 30%, #5a7a9a 60%, #9abadc 100%)",
-    dusk: "linear-gradient(135deg, #1a1530 0%, #2a2550 30%, #5a4580 60%, #8a75b0 100%)",
-    night: "linear-gradient(135deg, #0a0e20 0%, #1a1e38 30%, #2a2e4a 60%, #3a3e5c 100%)",
+    dawn: "linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 30%, #E8EAF6 60%, #BBDEFB 100%)",
+    day: "linear-gradient(135deg, #FFFFFF 0%, #F3E5F5 30%, #E8EAF6 60%, #E1F5FE 100%)",
+    dusk: "linear-gradient(135deg, #FCE4EC 0%, #F3E5F5 30%, #E1BEE7 60%, #CE93D8 100%)",
+    night: "linear-gradient(135deg, #EDE7F6 0%, #D1C4E9 30%, #B39DDB 60%, #9575CD 100%)",
   },
   storm: {
-    dawn: "linear-gradient(135deg, #0a0a14 0%, #1a1a2e 30%, #2a1a3e 60%, #3a2a4e 100%)",
-    day: "linear-gradient(135deg, #0d1117 0%, #1a1f2e 30%, #2a2535 60%, #3a3040 100%)",
-    dusk: "linear-gradient(135deg, #0a080e 0%, #1a1520 30%, #2a1a30 60%, #3a2a38 100%)",
-    night: "linear-gradient(135deg, #050508 0%, #0a0a14 30%, #141420 60%, #1e1e2c 100%)",
+    dawn: "linear-gradient(135deg, #ECEFF1 0%, #CFD8DC 30%, #B0BEC5 60%, #78909C 100%)",
+    day: "linear-gradient(135deg, #CFD8DC 0%, #B0BEC5 30%, #90A4AE 60%, #78909C 100%)",
+    dusk: "linear-gradient(135deg, #D7CCC8 0%, #BCAAA4 30%, #A1887F 60%, #8D6E63 100%)",
+    night: "linear-gradient(135deg, #D7CCC8 0%, #BCAAA4 30%, #A1887F 60%, #795548 100%)",
   },
   fog: {
-    dawn: "linear-gradient(135deg, #1a1f30 0%, #2a3040 30%, #4a5060 60%, #7a8090 100%)",
-    day: "linear-gradient(135deg, #1e2530 0%, #2e3540 30%, #4e5560 60%, #7e8590 100%)",
-    dusk: "linear-gradient(135deg, #1a1520 0%, #2a2530 30%, #4a3540 60%, #6a5560 100%)",
-    night: "linear-gradient(135deg, #0a0e14 0%, #141820 30%, #1e2228 60%, #282c34 100%)",
+    dawn: "linear-gradient(135deg, #FFF8E1 0%, #FFF3E0 30%, #EFEBE9 60%, #D7CCC8 100%)",
+    day: "linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 30%, #EEEEEE 60%, #E0E0E0 100%)",
+    dusk: "linear-gradient(135deg, #EFEBE9 0%, #D7CCC8 30%, #BCAAA4 60%, #A1887F 100%)",
+    night: "linear-gradient(135deg, #EFEBE9 0%, #E0D5C8 30%, #D7CCC8 60%, #BCAAA4 100%)",
   },
 };
 
@@ -98,7 +98,7 @@ function DynamicWallpaper() {
 
   // 3D orbs with parallax depth
   const orbs = useMemo(() => {
-    const colors = ["#4285F4", "#A142F4", "#EA4335", "#FBBC04", "#34A853", "#F439A0", "#00BCD4"];
+    const colors = ["#FFB74D", "#F48FB1", "#81D4FA", "#FFCC80", "#A5D6A7", "#CE93D8", "#80DEEA"];
     return Array.from({ length: 7 }, (_, i) => ({
       color: colors[i],
       size: 200 + Math.random() * 300,

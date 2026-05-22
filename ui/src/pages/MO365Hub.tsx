@@ -18,10 +18,10 @@ function MO365Hub() {
   return (
     <motion.div
       className="page"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+      transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
     >
       <div className="page-header">
         <FileSpreadsheet size={22} style={{ color: "#FBBC04" }} />

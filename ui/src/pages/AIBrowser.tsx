@@ -165,7 +165,7 @@ function AIBrowser() {
               {[
                 { name: "Google", url: "https://google.com", color: "#4285F4" },
                 { name: "YouTube", url: "https://youtube.com", color: "#EA4335" },
-                { name: "GitHub", url: "https://github.com", color: "#333" },
+                { name: "GitHub", url: "https://github.com", color: "#6B5744" },
                 { name: "M365", url: "https://office.com", color: "#FBBC04" },
               ].map((site) => (
                 <button
