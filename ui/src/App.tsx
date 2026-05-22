@@ -1,50 +1,63 @@
-import { useState } from "react";
+import { useState, useCallback, lazy, Suspense, memo } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import Dashboard from "./pages/Dashboard";
-import GeminiShell from "./pages/GeminiShell";
-import SelfEvolve from "./pages/SelfEvolve";
-import AgentMonitor from "./pages/AgentMonitor";
-import MO365Hub from "./pages/MO365Hub";
-import Settings from "./pages/Settings";
-import AIBrowser from "./pages/AIBrowser";
-import AIIDE from "./pages/AIIDE";
 import Dock from "./components/Dock";
-import GeminiOverlay from "./components/GeminiOverlay";
 import DynamicWallpaper from "./components/DynamicWallpaper";
 import AIActivityOrb from "./components/AIActivityOrb";
+
+/* Lazy-load pages — only loaded when navigated to.
+ * Reduces initial JS bundle and RAM footprint (macOS-style resource mgmt). */
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const GeminiShell = lazy(() => import("./pages/GeminiShell"));
+const SelfEvolve = lazy(() => import("./pages/SelfEvolve"));
+const AgentMonitor = lazy(() => import("./pages/AgentMonitor"));
+const MO365Hub = lazy(() => import("./pages/MO365Hub"));
+const Settings = lazy(() => import("./pages/Settings"));
+const AIBrowser = lazy(() => import("./pages/AIBrowser"));
+const AIIDE = lazy(() => import("./pages/AIIDE"));
+const GeminiOverlay = lazy(() => import("./components/GeminiOverlay"));
+
+const MemoWallpaper = memo(DynamicWallpaper);
+const MemoOrb = memo(AIActivityOrb);
 
 function App() {
   const [geminiOpen, setGeminiOpen] = useState(false);
 
+  const toggleGemini = useCallback(() => setGeminiOpen((v) => !v), []);
+  const closeGemini = useCallback(() => setGeminiOpen(false), []);
+
   return (
     <div className="desktop-container">
-      <DynamicWallpaper />
+      <MemoWallpaper />
 
       <main className="desktop-content">
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/shell" element={<GeminiShell />} />
-            <Route path="/evolve" element={<SelfEvolve />} />
-            <Route path="/agents" element={<AgentMonitor />} />
-            <Route path="/mo365" element={<MO365Hub />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/browser" element={<AIBrowser />} />
-            <Route path="/ide" element={<AIIDE />} />
-          </Routes>
-        </AnimatePresence>
+        <Suspense fallback={null}>
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/shell" element={<GeminiShell />} />
+              <Route path="/evolve" element={<SelfEvolve />} />
+              <Route path="/agents" element={<AgentMonitor />} />
+              <Route path="/mo365" element={<MO365Hub />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/browser" element={<AIBrowser />} />
+              <Route path="/ide" element={<AIIDE />} />
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
       </main>
 
-      <AIActivityOrb />
+      <MemoOrb />
 
       <AnimatePresence>
         {geminiOpen && (
-          <GeminiOverlay onClose={() => setGeminiOpen(false)} />
+          <Suspense fallback={null}>
+            <GeminiOverlay onClose={closeGemini} />
+          </Suspense>
         )}
       </AnimatePresence>
 
-      <Dock onGeminiClick={() => setGeminiOpen(!geminiOpen)} />
+      <Dock onGeminiClick={toggleGemini} />
     </div>
   );
 }
