@@ -1,10 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, X, Sparkles, Mic } from "lucide-react";
-
-interface GeminiOverlayProps {
-  onClose: () => void;
-}
+import { Sparkles, X, Send, Mic, Zap, Brain, Image, Code } from "lucide-react";
 
 interface Message {
   id: number;
@@ -12,39 +8,36 @@ interface Message {
   content: string;
 }
 
-const aiSuggestions = [
-  "What's the weather like?",
-  "Optimize my system performance",
-  "Open Microsoft Word",
-  "Change theme to dark mode",
-  "Show me battery status",
-  "Install Python 3.12",
+const suggestions = [
+  { icon: Zap, label: "Optimize system performance" },
+  { icon: Brain, label: "Summarize open documents" },
+  { icon: Image, label: "Generate a wallpaper" },
+  { icon: Code, label: "Write a Python script" },
 ];
+
+interface GeminiOverlayProps {
+  onClose: () => void;
+}
 
 function GeminiOverlay({ onClose }: GeminiOverlayProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const nextId = useRef(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const nextId = useRef(1);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
 
   const sendMessage = async (text?: string) => {
     const msg = text ?? input.trim();
-    if (!msg || isLoading) return;
+    if (!msg || isTyping) return;
 
     const userMsg: Message = { id: nextId.current++, role: "user", content: msg };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    setIsLoading(true);
+    setIsTyping(true);
 
     try {
       const res = await fetch("/api/v1/chat", {
@@ -55,21 +48,23 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
       const data = await res.json();
       setMessages((prev) => [
         ...prev,
-        { id: nextId.current++, role: "gemini", content: data.response ?? "I'm here to help." },
+        { id: nextId.current++, role: "gemini", content: data.response ?? "Processing..." },
       ]);
     } catch {
       setMessages((prev) => [
         ...prev,
-        { id: nextId.current++, role: "gemini", content: "Running in offline mode. Connect to the Gemini Orchestrator for full AI capabilities." },
+        { id: nextId.current++, role: "gemini", content: "Offline — connect orchestrator for full capabilities." },
       ]);
     } finally {
-      setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") sendMessage();
-    if (e.key === "Escape") onClose();
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
   };
 
   return (
@@ -78,51 +73,40 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <motion.div
         className="gemini-panel"
-        initial={{ scale: 0.9, y: 40, opacity: 0 }}
-        animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: 0.9, y: 40, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        initial={{ scale: 0.88, opacity: 0, rotateX: 8 }}
+        animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+        exit={{ scale: 0.88, opacity: 0, rotateX: -8 }}
+        transition={{ type: "spring", stiffness: 300, damping: 26 }}
       >
         {/* Header */}
         <div className="gemini-panel-header">
           <div className="gemini-header-left">
-            <div className="gemini-header-icon">
-              <Sparkles size={20} />
-            </div>
-            <span>Gemini</span>
+            <div className="gemini-header-icon"><Sparkles size={16} /></div>
+            Gemini
           </div>
-          <button className="gemini-close-btn" onClick={onClose}>
-            <X size={18} />
-          </button>
+          <button className="gemini-close-btn" onClick={onClose}><X size={16} /></button>
         </div>
 
         {/* Messages */}
         <div className="gemini-messages">
           {messages.length === 0 && (
             <div className="gemini-welcome">
-              <div className="gemini-welcome-icon">
-                <Sparkles size={36} />
-              </div>
-              <h2>Hello!</h2>
-              <p>How can I help you today?</p>
+              <div className="gemini-welcome-icon"><Sparkles size={32} /></div>
+              <h2>Hi, I'm Gemini</h2>
+              <p>Your AI assistant across Gemini OS</p>
               <div className="gemini-suggestions">
-                {aiSuggestions.map((s, i) => (
-                  <motion.button
-                    key={i}
+                {suggestions.map((s) => (
+                  <button
+                    key={s.label}
                     className="suggestion-chip"
-                    onClick={() => sendMessage(s)}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + i * 0.05 }}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
+                    onClick={() => sendMessage(s.label)}
                   >
-                    {s}
-                  </motion.button>
+                    <s.icon size={14} /> {s.label}
+                  </button>
                 ))}
               </div>
             </div>
@@ -136,9 +120,7 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
               animate={{ opacity: 1, y: 0 }}
             >
               {msg.role === "gemini" && (
-                <div className="gemini-msg-avatar">
-                  <Sparkles size={14} />
-                </div>
+                <div className="gemini-msg-avatar"><Sparkles size={12} /></div>
               )}
               <div className="gemini-msg-content">
                 <pre>{msg.content}</pre>
@@ -146,39 +128,32 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
             </motion.div>
           ))}
 
-          {isLoading && (
+          {isTyping && (
             <div className="gemini-msg gemini">
-              <div className="gemini-msg-avatar">
-                <Sparkles size={14} />
-              </div>
-              <div className="gemini-typing">
-                <span /><span /><span />
-              </div>
+              <div className="gemini-msg-avatar"><Sparkles size={12} /></div>
+              <div className="gemini-typing"><span /><span /><span /></div>
             </div>
           )}
-
-          <div ref={messagesEndRef} />
+          <div ref={bottomRef} />
         </div>
 
         {/* Input */}
         <div className="gemini-input-bar">
           <input
-            ref={inputRef}
+            className="gemini-input"
+            type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Gemini anything..."
-            className="gemini-input"
           />
-          <button className="gemini-voice-btn" title="Voice">
-            <Mic size={18} />
-          </button>
+          <button className="gemini-voice-btn"><Mic size={18} /></button>
           <button
             className="gemini-send-btn"
             onClick={() => sendMessage()}
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || isTyping}
           >
-            <Send size={18} />
+            <Send size={16} />
           </button>
         </div>
       </motion.div>

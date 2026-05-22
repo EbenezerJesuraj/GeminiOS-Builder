@@ -4,97 +4,95 @@ import {
   LayoutDashboard,
   Globe,
   Code2,
-  Dna,
-  Bot,
   FileSpreadsheet,
+  Bot,
+  Dna,
   Settings,
   Sparkles,
 } from "lucide-react";
 
+const dockApps = [
+  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4" },
+  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853" },
+  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4" },
+  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04" },
+  { path: "/agents", icon: Bot, label: "Agents", color: "#4285F4" },
+  { path: "/evolve", icon: Dna, label: "Evolve", color: "#EA4335" },
+  { path: "/settings", icon: Settings, label: "Settings", color: "#8E8698" },
+];
+
 interface DockProps {
   onGeminiClick: () => void;
 }
-
-const dockItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard", color: "#4285F4" },
-  { path: "/browser", icon: Globe, label: "AI Browser", color: "#EA4335" },
-  { path: "/ide", icon: Code2, label: "AI IDE", color: "#34A853" },
-  { path: "/mo365", icon: FileSpreadsheet, label: "Microsoft 365", color: "#FBBC04" },
-  { path: "/agents", icon: Bot, label: "AI Agents", color: "#4285F4" },
-  { path: "/evolve", icon: Dna, label: "Self-Evolve", color: "#EA4335" },
-  { path: "/settings", icon: Settings, label: "Settings", color: "#9AA0A6" },
-];
 
 function Dock({ onGeminiClick }: DockProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <motion.div
-      className="dock-container"
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 200, damping: 25, delay: 0.3 }}
-    >
-      <div className="dock">
-        {/* Gemini Button — Primary, Google-colored gradient */}
+    <div className="dock-container">
+      <motion.div
+        className="dock"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.2 }}
+      >
+        {/* Gemini primary button */}
         <motion.button
           className="dock-item gemini-dock-btn"
           onClick={onGeminiClick}
-          whileHover={{ scale: 1.35, y: -18 }}
           whileTap={{ scale: 0.92 }}
-          transition={{ type: "spring", stiffness: 400, damping: 17 }}
-          title="Gemini AI"
         >
-          <div className="gemini-icon-gradient">
-            <Sparkles size={24} />
-          </div>
-          <span className="dock-label">Gemini</span>
+          <motion.div
+            className="gemini-icon-gradient"
+            whileHover={{ scale: 1.12, rotateZ: 8 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          >
+            <Sparkles size={22} />
+          </motion.div>
+          <span className="dock-label" style={{ color: "#fff" }}>Gemini</span>
         </motion.button>
 
         <div className="dock-divider" />
 
-        {/* App Icons */}
-        {dockItems.map((item) => {
-          const isActive = location.pathname === item.path;
+        {dockApps.map((app) => {
+          const isActive = location.pathname === app.path;
           return (
             <motion.button
-              key={item.path}
-              className={`dock-item ${isActive ? "active" : ""}`}
-              onClick={() => navigate(item.path)}
-              whileHover={{ scale: 1.3, y: -16 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              title={item.label}
+              key={app.path}
+              className="dock-item"
+              onClick={() => navigate(app.path)}
+              whileTap={{ scale: 0.88 }}
             >
-              <div
+              <motion.div
                 className="dock-icon-wrapper"
-                style={{
-                  background: isActive
-                    ? `${item.color}22`
-                    : "transparent",
-                  borderColor: isActive ? `${item.color}55` : "transparent",
-                }}
+                whileHover={{ scale: 1.18, y: -8, rotateY: 12 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                style={isActive ? {
+                  background: `${app.color}18`,
+                  borderColor: `${app.color}30`,
+                  boxShadow: `0 0 20px ${app.color}25`,
+                } : undefined}
               >
-                <item.icon
+                <app.icon
                   size={22}
-                  style={{ color: isActive ? item.color : "#c4c7c5" }}
+                  style={{ color: isActive ? app.color : "#C4BCD0" }}
                 />
-              </div>
+              </motion.div>
               {isActive && (
                 <motion.div
                   className="dock-active-dot"
-                  layoutId="dock-dot"
-                  style={{ background: item.color }}
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  layoutId="dock-active"
+                  style={{ background: app.color, color: app.color }}
+                  transition={{ type: "spring", stiffness: 500, damping: 28 }}
                 />
               )}
-              <span className="dock-label">{item.label}</span>
+              <span className="dock-label">{app.label}</span>
             </motion.button>
           );
         })}
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }
 
