@@ -1,65 +1,55 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Cpu, HardDrive, Wifi, Battery, Shield } from "lucide-react";
+import { Cpu, HardDrive, MemoryStick, Wifi, Thermometer, Battery, Activity } from "lucide-react";
 
-interface SystemStatus {
-  orchestrator: string;
-  agents: Record<string, boolean>;
-  resources: {
-    cpu: string;
-    memory: string;
-    gpu_vram: string;
-    load: string;
-  };
-  llm_status: string;
+interface SystemStats {
+  cpu: number;
+  memory: number;
+  disk: number;
+  temp: number;
+  battery: number;
+  network: string;
 }
 
+interface AgentStatus {
+  [name: string]: boolean;
+}
+
+const statCards = [
+  { key: "cpu", label: "CPU", icon: Cpu, color: "#4285F4", unit: "%" },
+  { key: "memory", label: "Memory", icon: MemoryStick, color: "#EA4335", unit: "%" },
+  { key: "disk", label: "Disk", icon: HardDrive, color: "#34A853", unit: "%" },
+  { key: "temp", label: "Temp", icon: Thermometer, color: "#FBBC04", unit: "°C" },
+  { key: "battery", label: "Battery", icon: Battery, color: "#9C27B0", unit: "%" },
+  { key: "network", label: "Network", icon: Wifi, color: "#4285F4", unit: "" },
+];
+
 function Dashboard() {
-  const [status, setStatus] = useState<SystemStatus | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<SystemStats>({
+    cpu: 24, memory: 58, disk: 42, temp: 52, battery: 87, network: "Connected",
+  });
+  const [agents, setAgents] = useState<AgentStatus>({
+    system: true, battery: true, thermal: true, network: true,
+    security: true, workspace: true, memory: true, update: false, installer: false,
+  });
+  const [aiActive, setAiActive] = useState(true);
 
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const res = await fetch("/api/v1/status");
         const data = await res.json();
-        setStatus(data);
+        if (data.system) setStats(data.system);
+        if (data.agents) setAgents(data.agents);
+        setAiActive(data.orchestrator === "operational");
       } catch {
-        setStatus({
-          orchestrator: "demo",
-          agents: {
-            system_agent: true,
-            battery_agent: true,
-            thermal_agent: true,
-            network_agent: true,
-            security_agent: true,
-            memory_agent: true,
-          },
-          resources: {
-            cpu: "23.4%",
-            memory: "41.2%",
-            gpu_vram: "512MB / 4096MB",
-            load: "0.87",
-          },
-          llm_status: "available",
-        });
-      } finally {
-        setLoading(false);
+        // Use defaults
       }
     };
     fetchStatus();
     const interval = setInterval(fetchStatus, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const cards = [
-    { icon: Cpu, label: "CPU", value: status?.resources.cpu ?? "—", color: "#00c8ff" },
-    { icon: HardDrive, label: "Memory", value: status?.resources.memory ?? "—", color: "#7b2fff" },
-    { icon: Activity, label: "GPU VRAM", value: status?.resources.gpu_vram ?? "—", color: "#00e5a0" },
-    { icon: Wifi, label: "Network", value: "Connected", color: "#ff6d00" },
-    { icon: Battery, label: "Battery", value: "87%", color: "#80ff80" },
-    { icon: Shield, label: "Security", value: "Secure", color: "#c3a0ff" },
-  ];
 
   return (
     <motion.div
@@ -69,60 +59,58 @@ function Dashboard() {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <header className="page-header">
-        <h1>Gemini OS Dashboard</h1>
-        <p className="subtitle">
-          AI-Native Operating System — All systems{" "}
-          {status?.orchestrator === "operational" || status?.orchestrator === "demo"
-            ? "operational"
-            : "initializing"}
-        </p>
-      </header>
-
-      <div className="dashboard-grid">
-        {cards.map((card, i) => (
-          <motion.div
-            key={card.label}
-            className="dashboard-card glass"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-          >
-            <div className="card-icon" style={{ color: card.color }}>
-              <card.icon size={24} />
-            </div>
-            <div className="card-content">
-              <span className="card-label">{card.label}</span>
-              <span className="card-value">{card.value}</span>
-            </div>
-          </motion.div>
-        ))}
+      <div className="page-header">
+        <Activity className="header-icon" size={22} />
+        <div>
+          <h1>Dashboard</h1>
+          <span className="subtitle">System overview & AI agent status</span>
+        </div>
       </div>
 
-      <section className="dashboard-section">
+      <div className="dashboard-grid">
+        {statCards.map((card, i) => {
+          const val = stats[card.key as keyof SystemStats];
+          return (
+            <motion.div
+              key={card.key}
+              className="dashboard-card"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+            >
+              <card.icon size={20} style={{ color: card.color }} />
+              <div className="card-content">
+                <span className="card-label">{card.label}</span>
+                <span className="card-value">
+                  {val}{card.unit}
+                </span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      <div className="dashboard-section">
         <h2>AI Agents</h2>
         <div className="agents-grid">
-          {status &&
-            Object.entries(status.agents).map(([name, healthy]) => (
-              <div key={name} className="agent-badge glass">
-                <div className={`agent-dot ${healthy ? "healthy" : "unhealthy"}`} />
-                <span>{name.replace("_", " ")}</span>
-              </div>
-            ))}
+          {Object.entries(agents).map(([name, healthy]) => (
+            <div key={name} className="agent-badge">
+              <span className={`agent-dot ${healthy ? "healthy" : "unhealthy"}`} />
+              <span>{name.replace(/_/g, " ")}</span>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
 
-      <section className="dashboard-section">
-        <h2>LLM Status</h2>
-        <div className="glass llm-status-card">
+      <div className="dashboard-section">
+        <h2>AI Engine</h2>
+        <div className="llm-status-card">
           <div className="llm-indicator">
-            <div className={`ai-dot ${status?.llm_status === "available" ? "" : "inactive"}`} />
-            <span>Local AI: {status?.llm_status ?? "checking..."}</span>
+            <span className={`ai-dot ${aiActive ? "" : "inactive"}`} />
+            <span>{aiActive ? "Gemini Orchestrator — Active" : "AI Engine Offline"}</span>
           </div>
         </div>
-      </section>
-
-      {loading && <div className="loading-overlay">Loading system status...</div>}
+      </div>
     </motion.div>
   );
 }

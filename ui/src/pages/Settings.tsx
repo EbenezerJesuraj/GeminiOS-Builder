@@ -1,175 +1,190 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Settings as SettingsIcon, Monitor, Brain, Shield, Palette } from "lucide-react";
+import { Settings as SettingsIcon, Sparkles, Monitor, Palette, Bell, Shield, Cpu } from "lucide-react";
 
 function Settings() {
-  const [settings, setSettings] = useState({
-    terminalHidden: true,
-    aiShellDefault: true,
-    animations: true,
-    autoOptimize: true,
-    selfEvolveEnabled: true,
-    selfEvolveConfirm: true,
-    mo365Mode: "webapp",
-    theme: "glass-dark",
-    voiceAssistant: true,
-  });
+  const [localAI, setLocalAI] = useState(true);
+  const [cloudFallback, setCloudFallback] = useState(true);
+  const [voiceAssistant, setVoiceAssistant] = useState(true);
+  const [autoUpdate, setAutoUpdate] = useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [threatDetection, setThreatDetection] = useState(true);
 
-  const updateSetting = (key: string, value: boolean | string) => {
-    setSettings((prev) => ({ ...prev, [key]: value }));
-  };
+  const Toggle = ({
+    checked,
+    onChange,
+  }: {
+    checked: boolean;
+    onChange: (v: boolean) => void;
+  }) => (
+    <label className="toggle-switch">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="toggle-slider" />
+    </label>
+  );
 
   return (
     <motion.div
-      className="page settings"
+      className="page"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
     >
-      <header className="page-header">
-        <SettingsIcon size={28} className="header-icon" />
+      <div className="page-header">
+        <SettingsIcon size={22} style={{ color: "#9AA0A6" }} />
         <div>
           <h1>Settings</h1>
-          <p className="subtitle">Configure Gemini OS behavior and preferences.</p>
+          <span className="subtitle">Configure Gemini OS preferences</span>
         </div>
-      </header>
+      </div>
 
-      <section className="settings-section glass">
+      <div className="settings-section">
         <div className="settings-section-header">
-          <Monitor size={20} />
-          <h2>Interface</h2>
+          <Sparkles size={18} />
+          <h2>AI Configuration</h2>
         </div>
         <div className="settings-group">
-          <SettingToggle
-            label="Hide terminal by default"
-            description="Terminal is only shown when explicitly requested (Super+Shift+Enter)"
-            checked={settings.terminalHidden}
-            onChange={(v) => updateSetting("terminalHidden", v)}
-          />
-          <SettingToggle
-            label="AI Shell as default launcher"
-            description="Super+Space opens Gemini Shell instead of traditional app launcher"
-            checked={settings.aiShellDefault}
-            onChange={(v) => updateSetting("aiShellDefault", v)}
-          />
-          <SettingToggle
-            label="Enable animations"
-            description="Smooth transitions and visual effects"
-            checked={settings.animations}
-            onChange={(v) => updateSetting("animations", v)}
-          />
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Local AI (Ollama)</span>
+              <span className="setting-desc">Run AI models locally on device</span>
+            </div>
+            <Toggle checked={localAI} onChange={setLocalAI} />
+          </div>
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Cloud Fallback (Gemini API)</span>
+              <span className="setting-desc">Use Google Gemini when local models unavailable</span>
+            </div>
+            <Toggle checked={cloudFallback} onChange={setCloudFallback} />
+          </div>
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Default Model</span>
+              <span className="setting-desc">Primary model for AI operations</span>
+            </div>
+            <select className="setting-select">
+              <option>gemma3:2b</option>
+              <option>deepseek-coder:6.7b</option>
+              <option>qwen:7b</option>
+              <option>llava:7b</option>
+            </select>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section className="settings-section glass">
+      <div className="settings-section">
         <div className="settings-section-header">
-          <Brain size={20} />
-          <h2>AI & Self-Evolve</h2>
+          <Monitor size={18} />
+          <h2>Voice & Input</h2>
         </div>
         <div className="settings-group">
-          <SettingToggle
-            label="Auto-optimize system"
-            description="AI agents automatically tune performance, battery, and thermals"
-            checked={settings.autoOptimize}
-            onChange={(v) => updateSetting("autoOptimize", v)}
-          />
-          <SettingToggle
-            label="Enable self-evolve"
-            description="Allow OS to restructure itself based on your prompts"
-            checked={settings.selfEvolveEnabled}
-            onChange={(v) => updateSetting("selfEvolveEnabled", v)}
-          />
-          <SettingToggle
-            label="Require confirmation for changes"
-            description="Always ask before applying self-evolve modifications"
-            checked={settings.selfEvolveConfirm}
-            onChange={(v) => updateSetting("selfEvolveConfirm", v)}
-          />
-          <SettingToggle
-            label="Voice assistant"
-            description="Enable voice commands via Super+A"
-            checked={settings.voiceAssistant}
-            onChange={(v) => updateSetting("voiceAssistant", v)}
-          />
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Voice Assistant</span>
+              <span className="setting-desc">Activate with Super+A</span>
+            </div>
+            <Toggle checked={voiceAssistant} onChange={setVoiceAssistant} />
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section className="settings-section glass">
+      <div className="settings-section">
         <div className="settings-section-header">
-          <Palette size={20} />
+          <Palette size={18} />
           <h2>Appearance</h2>
         </div>
         <div className="settings-group">
           <div className="setting-item">
             <div className="setting-label">
               <span>Theme</span>
-              <span className="setting-desc">Visual theme for the desktop</span>
+              <span className="setting-desc">Material Theme 3 design system</span>
             </div>
-            <select
-              value={settings.theme}
-              onChange={(e) => updateSetting("theme", e.target.value)}
-              className="setting-select"
-            >
-              <option value="glass-dark">Glass Dark</option>
-              <option value="glass-light">Glass Light</option>
-              <option value="neon">Neon</option>
-              <option value="minimal">Minimal</option>
+            <select className="setting-select">
+              <option>Material Dark</option>
+              <option>Material Light</option>
+              <option>AMOLED Black</option>
+            </select>
+          </div>
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Wallpaper Mode</span>
+              <span className="setting-desc">Dynamic weather-based wallpaper</span>
+            </div>
+            <select className="setting-select">
+              <option>AI Dynamic (Weather)</option>
+              <option>Static Gradient</option>
+              <option>Custom Image</option>
             </select>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="settings-section glass">
+      <div className="settings-section">
         <div className="settings-section-header">
-          <Shield size={20} />
-          <h2>Security</h2>
+          <Bell size={18} />
+          <h2>Notifications</h2>
         </div>
         <div className="settings-group">
           <div className="setting-item">
             <div className="setting-label">
-              <span>Agent sandbox level</span>
-              <span className="setting-desc">
-                Controls how much access AI agents have to the system
-              </span>
+              <span>Desktop Notifications</span>
+              <span className="setting-desc">System and app notifications via Mako</span>
             </div>
-            <select className="setting-select" defaultValue="standard">
-              <option value="strict">Strict — minimal permissions</option>
-              <option value="standard">Standard — balanced access</option>
-              <option value="permissive">Permissive — full access</option>
+            <Toggle checked={notifications} onChange={setNotifications} />
+          </div>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <div className="settings-section-header">
+          <Shield size={18} />
+          <h2>Security & Updates</h2>
+        </div>
+        <div className="settings-group">
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Threat Detection</span>
+              <span className="setting-desc">AI-powered file integrity monitoring</span>
+            </div>
+            <Toggle checked={threatDetection} onChange={setThreatDetection} />
+          </div>
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Auto-Update</span>
+              <span className="setting-desc">AI-managed system updates with rollback</span>
+            </div>
+            <Toggle checked={autoUpdate} onChange={setAutoUpdate} />
+          </div>
+        </div>
+      </div>
+
+      <div className="settings-section">
+        <div className="settings-section-header">
+          <Cpu size={18} />
+          <h2>Performance</h2>
+        </div>
+        <div className="settings-group">
+          <div className="setting-item">
+            <div className="setting-label">
+              <span>Power Profile</span>
+              <span className="setting-desc">Managed by Battery Agent</span>
+            </div>
+            <select className="setting-select">
+              <option>AI Adaptive</option>
+              <option>Performance</option>
+              <option>Balanced</option>
+              <option>Power Saver</option>
             </select>
           </div>
         </div>
-      </section>
-    </motion.div>
-  );
-}
-
-function SettingToggle({
-  label,
-  description,
-  checked,
-  onChange,
-}: {
-  label: string;
-  description: string;
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) {
-  return (
-    <div className="setting-item">
-      <div className="setting-label">
-        <span>{label}</span>
-        <span className="setting-desc">{description}</span>
       </div>
-      <label className="toggle-switch">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-        />
-        <span className="toggle-slider" />
-      </label>
-    </div>
+    </motion.div>
   );
 }
 

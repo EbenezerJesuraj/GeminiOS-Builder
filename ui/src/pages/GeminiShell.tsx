@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mic, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Sparkles, Send, Mic } from "lucide-react";
 
 interface Message {
   id: number;
   role: "user" | "assistant" | "system";
   content: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
 function GeminiShell() {
@@ -14,16 +14,14 @@ function GeminiShell() {
     {
       id: 0,
       role: "system",
-      content:
-        "Welcome to Gemini OS. I'm your AI assistant. Ask me anything — from launching apps to restructuring your entire OS.",
-      timestamp: new Date(),
+      content: "Welcome to Gemini Shell. Type naturally — no commands needed.",
+      timestamp: new Date().toLocaleTimeString(),
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-  let nextId = useRef(1);
+  const nextId = useRef(1);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,9 +34,8 @@ function GeminiShell() {
       id: nextId.current++,
       role: "user",
       content: input.trim(),
-      timestamp: new Date(),
+      timestamp: new Date().toLocaleTimeString(),
     };
-
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -50,14 +47,13 @@ function GeminiShell() {
         body: JSON.stringify({ message: userMessage.content }),
       });
       const data = await res.json();
-
       setMessages((prev) => [
         ...prev,
         {
           id: nextId.current++,
           role: "assistant",
-          content: data.response ?? "I couldn't process that request.",
-          timestamp: new Date(),
+          content: data.response ?? "Processing your request...",
+          timestamp: new Date().toLocaleTimeString(),
         },
       ]);
     } catch {
@@ -66,9 +62,8 @@ function GeminiShell() {
         {
           id: nextId.current++,
           role: "assistant",
-          content:
-            "Connection to Gemini Orchestrator unavailable. Running in offline mode.",
-          timestamp: new Date(),
+          content: "Offline mode — connect to orchestrator for full AI capabilities.",
+          timestamp: new Date().toLocaleTimeString(),
         },
       ]);
     } finally {
@@ -86,86 +81,63 @@ function GeminiShell() {
   return (
     <motion.div
       className="page gemini-shell"
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.25 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
     >
-      <header className="shell-header">
-        <Sparkles size={22} className="shell-icon" />
-        <h1>Gemini Shell</h1>
-        <span className="shell-hint">
-          Your AI-native interface — no terminal needed
-        </span>
-      </header>
+      <div className="shell-header">
+        <Sparkles className="shell-icon" size={20} />
+        <h1 style={{ fontSize: 18, fontWeight: 600 }}>Gemini Shell</h1>
+        <span className="shell-hint">AI-native interface — no commands needed</span>
+      </div>
 
       <div className="shell-messages">
-        <AnimatePresence>
-          {messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              className={`shell-message ${msg.role}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="message-avatar">
-                {msg.role === "user" ? "You" : "AI"}
-              </div>
-              <div className="message-body">
-                <pre className="message-text">{msg.content}</pre>
-                <span className="message-time">
-                  {msg.timestamp.toLocaleTimeString()}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-
-        {isLoading && (
+        {messages.map((msg) => (
           <motion.div
-            className="shell-message assistant loading"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key={msg.id}
+            className={`shell-message ${msg.role}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            <div className="message-avatar">AI</div>
+            <div className="message-avatar">
+              {msg.role === "user" ? "U" : <Sparkles size={12} />}
+            </div>
             <div className="message-body">
-              <div className="typing-dots">
-                <span />
-                <span />
-                <span />
-              </div>
+              <span className="message-text">{msg.content}</span>
+              <span className="message-time">{msg.timestamp}</span>
             </div>
           </motion.div>
-        )}
+        ))}
 
+        {isLoading && (
+          <div className="shell-message assistant">
+            <div className="message-avatar"><Sparkles size={12} /></div>
+            <div className="message-body">
+              <div className="typing-dots"><span /><span /><span /></div>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="shell-input-container glass">
+      <div className="shell-input-container">
         <textarea
-          ref={inputRef}
           className="shell-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask Gemini OS anything..."
+          placeholder="Ask anything — 'optimize my battery', 'install ffmpeg', 'change theme'..."
           rows={1}
         />
-        <button
-          className="shell-btn voice-btn"
-          title="Voice input"
-          onClick={() => {}}
-        >
-          <Mic size={18} />
-        </button>
+        <button className="shell-btn" title="Voice"><Mic size={18} /></button>
         <button
           className="shell-btn send-btn"
           onClick={sendMessage}
           disabled={!input.trim() || isLoading}
+          style={{ background: "#4285F4", color: "white", borderRadius: "9999px" }}
         >
-          <Send size={18} />
+          <Send size={16} />
         </button>
       </div>
     </motion.div>

@@ -1,98 +1,64 @@
 import { motion } from "framer-motion";
-import { FileSpreadsheet, FileText, Presentation, Mail, Cloud } from "lucide-react";
+import { FileText, Table, Presentation, Mail, Cloud, Users, FileSpreadsheet } from "lucide-react";
 
-const mo365Apps = [
-  {
-    name: "Word",
-    icon: FileText,
-    url: "https://www.office.com/launch/word",
-    color: "#2b579a",
-    description: "Documents and text editing",
-  },
-  {
-    name: "Excel",
-    icon: FileSpreadsheet,
-    url: "https://www.office.com/launch/excel",
-    color: "#217346",
-    description: "Spreadsheets and data analysis",
-  },
-  {
-    name: "PowerPoint",
-    icon: Presentation,
-    url: "https://www.office.com/launch/powerpoint",
-    color: "#d24726",
-    description: "Presentations and slides",
-  },
-  {
-    name: "Outlook",
-    icon: Mail,
-    url: "https://outlook.office.com",
-    color: "#0078d4",
-    description: "Email and calendar",
-  },
-  {
-    name: "OneDrive",
-    icon: Cloud,
-    url: "https://onedrive.live.com",
-    color: "#0078d4",
-    description: "Cloud storage and file sync",
-  },
+const apps = [
+  { name: "Word", icon: FileText, color: "#2B579A", url: "https://www.office.com/launch/word" },
+  { name: "Excel", icon: Table, color: "#217346", url: "https://www.office.com/launch/excel" },
+  { name: "PowerPoint", icon: Presentation, color: "#D04423", url: "https://www.office.com/launch/powerpoint" },
+  { name: "Outlook", icon: Mail, color: "#0078D4", url: "https://outlook.office.com" },
+  { name: "OneDrive", icon: Cloud, color: "#0078D4", url: "https://onedrive.live.com" },
+  { name: "Teams", icon: Users, color: "#6264A7", url: "https://teams.microsoft.com" },
 ];
 
 function MO365Hub() {
-  const launchApp = (url: string) => {
-    window.open(url, "_blank");
+  const openApp = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
     <motion.div
-      className="page mo365-hub"
+      className="page"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
     >
-      <header className="page-header">
-        <FileSpreadsheet size={28} className="header-icon" style={{ color: "#ff6d00" }} />
+      <div className="page-header">
+        <FileSpreadsheet size={22} style={{ color: "#FBBC04" }} />
         <div>
           <h1>Microsoft 365</h1>
-          <p className="subtitle">
-            Native Microsoft 365 integration — access Word, Excel, PowerPoint,
-            Outlook, and OneDrive directly from Gemini OS.
-          </p>
+          <span className="subtitle">Native webapp integration with AI assistance</span>
         </div>
-      </header>
+      </div>
 
       <div className="mo365-grid">
-        {mo365Apps.map((app, i) => (
-          <motion.button
+        {apps.map((app, i) => (
+          <motion.div
             key={app.name}
-            className="mo365-card glass"
-            onClick={() => launchApp(app.url)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            whileHover={{ scale: 1.03, y: -4 }}
-            whileTap={{ scale: 0.98 }}
+            className="mo365-card"
+            onClick={() => openApp(app.url)}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 25 }}
+            whileHover={{ scale: 1.04, y: -4 }}
+            whileTap={{ scale: 0.97 }}
           >
-            <div className="mo365-icon" style={{ color: app.color }}>
-              <app.icon size={36} />
-            </div>
+            <app.icon size={28} style={{ color: app.color }} />
             <h3>{app.name}</h3>
-            <p>{app.description}</p>
-          </motion.button>
+            <p>Open in webapp mode</p>
+          </motion.div>
         ))}
       </div>
 
-      <section className="mo365-info glass">
-        <h3>Integration Features</h3>
+      <div className="mo365-info">
+        <h3>Native Integration</h3>
         <ul>
-          <li>Webapp mode — runs natively in Chromium with OS-level integration</li>
+          <li>Apps run as dedicated Chromium windows</li>
           <li>AI-powered document assistance via Gemini Shell</li>
-          <li>Automatic OneDrive sync with local file system</li>
-          <li>Smart notifications through Mako notification daemon</li>
-          <li>Keyboard shortcuts mapped to Hyprland window manager</li>
+          <li>System notifications for email and meetings</li>
+          <li>Keyboard shortcuts mapped through Hyprland</li>
         </ul>
-      </section>
+      </div>
     </motion.div>
   );
 }
