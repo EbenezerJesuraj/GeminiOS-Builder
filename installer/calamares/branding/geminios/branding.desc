@@ -1,0 +1,30 @@
+# ============================================================
+# Gemini OS — Calamares Branding
+# ============================================================
+
+componentName: geminios
+
+strings:
+    productName: Gemini OS
+    shortProductName: GeminiOS
+    version: 0.1.0-alpha
+    shortVersion: 0.1.0
+    versionedName: Gemini OS 0.1.0
+    shortVersionedName: GeminiOS 0.1.0
+    bootloaderEntryName: GeminiOS
+    productUrl: https://github.com/EbenezerJesuraj/GeminiOS-Builder
+    supportUrl: https://github.com/EbenezerJesuraj/GeminiOS-Builder/issues
+    knownIssuesUrl: https://github.com/EbenezerJesuraj/GeminiOS-Builder/issues
+    releaseNotesUrl: https://github.com/EbenezerJesuraj/GeminiOS-Builder/releases
+
+images:
+    productLogo: "geminios-logo.svg"
+    productIcon: "geminios-icon.svg"
+
+slideshow: "show.qml"
+
+style:
+    sidebarBackground: "#0f0f19"
+    sidebarText: "#dce4f0"
+    sidebarTextSelect: "#00c8ff"
+    sidebarTextHighlight: "#7b2fff"

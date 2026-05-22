@@ -1,0 +1,65 @@
+#!/bin/bash
+# ============================================================
+# Gemini OS — Post-Installation Setup
+# Runs after Calamares finishes installing the OS
+# ============================================================
+set -e
+
+echo "[Gemini OS] Running post-installation setup..."
+
+# Pull default AI models via Ollama
+echo "[Gemini OS] Pulling default AI models..."
+systemctl start ollama.service 2>/dev/null || true
+sleep 3
+
+ollama pull gemma3:2b 2>/dev/null &
+OLLAMA_PID=$!
+
+# Create Gemini OS directories
+mkdir -p /var/lib/geminios/{models,cache,state,logs,memory}
+mkdir -p /var/lib/geminios/self-evolve/{snapshots,rollback,manifests}
+mkdir -p /etc/geminios
+
+# Generate default configuration
+cat > /etc/geminios/config.yaml << 'CONF'
+# Gemini OS — System Configuration
+version: "0.1.0"
+
+ai:
+  local_runtime: ollama
+  default_model: gemma3:2b
+  cloud_provider: gemini
+  auto_optimize: true
+
+self_evolve:
+  enabled: true
+  auto_snapshot: true
+  max_snapshots: 10
+  rollback_enabled: true
+  require_confirmation: true
+
+ui:
+  theme: glass-dark
+  terminal_hidden: true
+  ai_shell_default: true
+  animations: true
+
+mo365:
+  enabled: true
+  mode: webapp
+  browser: chromium
+
+services:
+  orchestrator: true
+  battery_agent: true
+  thermal_agent: true
+  network_agent: true
+  security_agent: true
+  memory_agent: true
+  voice_assistant: true
+CONF
+
+# Wait for model pull
+wait $OLLAMA_PID 2>/dev/null || true
+
+echo "[Gemini OS] Post-installation setup complete."

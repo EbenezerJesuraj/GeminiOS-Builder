@@ -1,0 +1,14 @@
+[Unit]
+Description=Gemini OS — Self-Evolving Engine
+After=gemini-orchestrator.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -c "import asyncio; from self_evolve.src.engine import SelfEvolveEngine; e = SelfEvolveEngine(); asyncio.get_event_loop().run_forever()"
+WorkingDirectory=/usr/lib/geminios
+Restart=always
+RestartSec=10
+Environment=PYTHONPATH=/usr/lib/geminios
+
+[Install]
+WantedBy=multi-user.target

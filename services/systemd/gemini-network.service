@@ -1,0 +1,14 @@
+[Unit]
+Description=Gemini OS — AI Network Agent
+After=NetworkManager.service gemini-orchestrator.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -c "import asyncio; from ai_agents.network_agent import NetworkAgent; a = NetworkAgent(); asyncio.run(a.start())"
+WorkingDirectory=/usr/lib/geminios
+Restart=always
+RestartSec=10
+Environment=PYTHONPATH=/usr/lib/geminios
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,113 @@
+/* ============================================================
+ * Gemini OS — Waybar Glass-Morphism Theme
+ * ============================================================ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(15, 15, 25, 0.72);
+    border-radius: 14px;
+    border: 1px solid rgba(100, 180, 255, 0.18);
+    color: #dce4f0;
+}
+
+tooltip {
+    background: rgba(20, 20, 35, 0.92);
+    border: 1px solid rgba(100, 180, 255, 0.3);
+    border-radius: 10px;
+    color: #dce4f0;
+}
+
+#custom-gemini-logo {
+    color: #00c8ff;
+    font-weight: bold;
+    padding: 0 14px;
+    font-size: 14px;
+}
+
+#workspaces button {
+    padding: 0 6px;
+    color: #8899aa;
+    border: none;
+    border-radius: 8px;
+    margin: 3px 2px;
+    background: transparent;
+    transition: all 0.25s ease;
+}
+
+#workspaces button.active {
+    color: #00c8ff;
+    background: rgba(0, 200, 255, 0.12);
+    border: 1px solid rgba(0, 200, 255, 0.3);
+}
+
+#workspaces button:hover {
+    background: rgba(0, 200, 255, 0.08);
+    color: #ffffff;
+}
+
+#custom-ai-status {
+    color: #7b2fff;
+    padding: 0 10px;
+}
+
+#clock {
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0 14px;
+}
+
+#custom-mo365 {
+    color: #ff6d00;
+    font-weight: bold;
+    padding: 0 12px;
+    border-radius: 8px;
+    margin: 4px 2px;
+    background: rgba(255, 109, 0, 0.08);
+}
+
+#custom-mo365:hover {
+    background: rgba(255, 109, 0, 0.18);
+}
+
+#pulseaudio {
+    color: #c3a0ff;
+    padding: 0 10px;
+}
+
+#network {
+    color: #00e5a0;
+    padding: 0 10px;
+}
+
+#battery {
+    color: #80ff80;
+    padding: 0 10px;
+}
+
+#battery.warning {
+    color: #ffcc00;
+}
+
+#battery.critical {
+    color: #ff4444;
+    animation: blink 1s infinite;
+}
+
+#custom-ai-battery {
+    color: #00c8ff;
+    padding: 0 8px;
+    font-size: 11px;
+}
+
+#tray {
+    padding: 0 8px;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}

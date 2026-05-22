@@ -1,0 +1,20 @@
+#!/bin/bash
+# ============================================================
+# Gemini Battery Status — Waybar module
+# Reports AI-optimized battery information
+# ============================================================
+
+if [ -f /sys/class/power_supply/BAT0/capacity ]; then
+    CAP=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null)
+    STATUS=$(cat /sys/class/power_supply/BAT0/status 2>/dev/null)
+
+    if [ "$STATUS" = "Charging" ]; then
+        echo "AI:${CAP}%+"
+    elif [ "$CAP" -lt 20 ]; then
+        echo "AI:${CAP}%!"
+    else
+        echo "AI:${CAP}%"
+    fi
+else
+    echo ""
+fi

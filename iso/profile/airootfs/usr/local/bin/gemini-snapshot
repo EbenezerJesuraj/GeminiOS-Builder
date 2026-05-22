@@ -1,0 +1,37 @@
+#!/bin/bash
+# ============================================================
+# Gemini Snapshot — System State Snapshot Tool
+# Creates rollback snapshots for the self-evolve engine
+# ============================================================
+set -e
+
+SNAPSHOT_DIR="/var/lib/geminios/self-evolve/snapshots"
+LABEL="${1:-manual}"
+SNAPSHOT_ID="snap-$(date +%Y%m%d-%H%M%S)-${LABEL}"
+SNAPSHOT_PATH="${SNAPSHOT_DIR}/${SNAPSHOT_ID}"
+
+mkdir -p "$SNAPSHOT_PATH"
+
+echo "[Gemini OS] Creating snapshot: $SNAPSHOT_ID"
+
+# Snapshot critical config
+for conf in /etc/geminios/config.yaml \
+            /home/*/.config/hypr/hyprland.conf \
+            /home/*/.config/waybar/config.jsonc \
+            /home/*/.config/waybar/style.css; do
+    if [ -f "$conf" ]; then
+        DEST="${SNAPSHOT_PATH}${conf}"
+        mkdir -p "$(dirname "$DEST")"
+        cp "$conf" "$DEST"
+    fi
+done
+
+# Snapshot package list
+pacman -Qqe > "${SNAPSHOT_PATH}/packages.txt" 2>/dev/null || true
+
+# Snapshot enabled services
+systemctl list-unit-files --state=enabled --no-pager -q \
+    > "${SNAPSHOT_PATH}/enabled-services.txt" 2>/dev/null || true
+
+echo "[Gemini OS] Snapshot created: $SNAPSHOT_ID"
+echo "$SNAPSHOT_ID"

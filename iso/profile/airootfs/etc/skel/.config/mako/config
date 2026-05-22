@@ -1,0 +1,30 @@
+# ============================================================
+# Gemini OS — Mako Notification Daemon Configuration
+# ============================================================
+
+font=JetBrainsMono Nerd Font 11
+background-color=#0f0f19dd
+text-color=#dce4f0
+border-color=#00c8ff44
+border-size=1
+border-radius=12
+padding=14
+margin=12
+width=360
+height=120
+default-timeout=6000
+max-visible=4
+layer=overlay
+anchor=top-right
+icon-path=/usr/share/icons/Papirus
+max-icon-size=48
+
+[urgency=critical]
+background-color=#1a0000dd
+border-color=#ff444488
+default-timeout=0
+
+[app-name=gemini-ai]
+background-color=#0a1a2fdd
+border-color=#7b2fff66
+default-timeout=8000

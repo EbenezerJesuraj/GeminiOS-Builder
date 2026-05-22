@@ -1,0 +1,16 @@
+[Unit]
+Description=Gemini OS — Central AI Orchestrator
+Documentation=https://github.com/EbenezerJesuraj/GeminiOS-Builder
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -m uvicorn orchestrator.src.api_server:app --host 127.0.0.1 --port 8420
+WorkingDirectory=/usr/lib/geminios
+Restart=always
+RestartSec=5
+Environment=PYTHONPATH=/usr/lib/geminios
+
+[Install]
+WantedBy=multi-user.target

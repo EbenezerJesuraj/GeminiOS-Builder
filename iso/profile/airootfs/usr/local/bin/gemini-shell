@@ -1,0 +1,38 @@
+#!/bin/bash
+# ============================================================
+# Gemini Shell — AI-Native Interface Daemon
+# Starts the Gemini OS AI dashboard (React + Tauri)
+# This is the primary user interface — no terminal needed
+# ============================================================
+
+GEMINI_UI_DIR="/usr/lib/geminios/ui"
+GEMINI_API_PORT=8420
+
+# Start the orchestrator API server if not already running
+if ! pgrep -f "gemini-orchestrator" > /dev/null 2>&1; then
+    python3 -m uvicorn orchestrator.src.api_server:app \
+        --host 127.0.0.1 --port "$GEMINI_API_PORT" \
+        --log-level warning &
+fi
+
+# Wait for API to be ready
+for i in $(seq 1 30); do
+    if curl -s "http://127.0.0.1:${GEMINI_API_PORT}/api/v1/status" > /dev/null 2>&1; then
+        break
+    fi
+    sleep 0.5
+done
+
+# Launch the Tauri app (or fallback to browser-based UI)
+if command -v gemini-os-shell > /dev/null 2>&1; then
+    exec gemini-os-shell
+elif [ -d "$GEMINI_UI_DIR/dist" ]; then
+    # Serve the built React app
+    cd "$GEMINI_UI_DIR" || exit 1
+    python3 -m http.server 3000 --directory dist &
+    UI_PID=$!
+    chromium --app="http://localhost:3000" \
+        --class=gemini-shell \
+        --user-data-dir="$HOME/.config/geminios/shell-profile" &
+    wait $UI_PID
+fi

@@ -1,0 +1,136 @@
+# ============================================================
+# Gemini OS — Complete Package Manifest
+# ============================================================
+
+# --- Base System ---
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+mkinitcpio
+mkinitcpio-archiso
+syslinux
+efibootmgr
+grub
+
+# --- Hardware & Drivers ---
+mesa
+vulkan-icd-loader
+vulkan-radeon
+vulkan-intel
+xf86-video-amdgpu
+xf86-video-intel
+nvidia-open
+nvidia-utils
+
+# --- Wayland & Desktop ---
+hyprland
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+xdg-utils
+wayland
+wayland-protocols
+wlroots
+qt5-wayland
+qt6-wayland
+
+# --- Display & Theme ---
+nwg-look
+kvantum
+ttf-jetbrains-mono-nerd
+ttf-nerd-fonts-symbols
+papirus-icon-theme
+breeze-gtk
+breeze
+
+# --- UI Shell & Widgets ---
+waybar
+rofi-wayland
+mako
+swww
+grim
+slurp
+wl-clipboard
+cliphist
+
+# --- Audio ---
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+
+# --- Networking ---
+networkmanager
+network-manager-applet
+iwd
+bluez
+bluez-utils
+
+# --- Terminal (hidden by default, available on demand) ---
+foot
+kitty
+
+# --- File Management ---
+thunar
+gvfs
+gvfs-mtp
+
+# --- Installer ---
+calamares
+os-prober
+ntfs-3g
+
+# --- Security ---
+polkit-kde-agent
+gnome-keyring
+apparmor
+
+# --- AI Runtime Dependencies ---
+python
+python-pip
+python-requests
+python-aiohttp
+python-grpcio
+python-protobuf
+python-psutil
+python-dbus-next
+python-pydantic
+python-fastapi
+python-uvicorn
+python-websockets
+python-redis
+python-numpy
+python-scikit-learn
+python-pywal
+
+# --- AI Engines ---
+ollama
+
+# --- System Tools ---
+htop
+rclone
+git
+curl
+wget
+jq
+yq
+unzip
+rsync
+
+# --- Voice / Multimedia ---
+ffmpeg
+sox
+
+# --- Microsoft 365 Web Integration ---
+chromium
+
+# --- Development (for self-evolve) ---
+rust
+cargo
+nodejs
+npm
+
+# --- Self-Evolve Infrastructure ---
+docker

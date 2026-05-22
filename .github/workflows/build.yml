@@ -1,30 +1,103 @@
-name: Compile Custom GeminiOS ISO
+name: Gemini OS — Build ISO & Validate
 
 on:
-  workflow_dispatch: # Enables manual trigger button inside your GitHub console
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-image:
+  lint-and-validate:
+    name: Lint & Validate
     runs-on: ubuntu-latest
     steps:
-    - name: Pull Repository Files
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Run Arch Linux Core Engine & Compile ISO
-      run: |
-        docker run --privileged -v ${{ github.workspace }}:/workspace archlinux:latest /bin/bash -c "
-          pacman -Syu --noconfirm && \
-          pacman -S --needed --noconfirm archiso git base-devel && \
-          mkdir -p /tmp/archiso && \
-          cp -r /usr/share/archiso/configs/releng/ /tmp/archiso/profile && \
-          chmod +x /workspace/setup_profile.sh && \
-          /workspace/setup_profile.sh /tmp/archiso/profile && \
-          mkarchiso -v -w /tmp/archiso/work -o /workspace/out /tmp/archiso/profile
-        "
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Publish Bootable ISO File Link
-      uses: actions/upload-artifact@v4
-      with:
-        name: GeminiOS-Live-Installer
-        path: out/*.iso
-        retention-days: 3 # Image stays downloadable for 3 days
+      - name: Install Python linting tools
+        run: pip install ruff pyright
+
+      - name: Lint Python code
+        run: |
+          ruff check orchestrator/ ai-agents/ self-evolve/ cloud/ --select E,W,F --ignore E501
+        continue-on-error: true
+
+      - name: Validate shell scripts
+        run: |
+          find . -name "*.sh" -type f | while read script; do
+            bash -n "$script" 2>&1 || echo "Syntax error in $script"
+          done
+
+      - name: Validate JSON configs
+        run: |
+          find . -name "*.json" -o -name "*.jsonc" | while read f; do
+            python3 -c "
+          import json, re, sys
+          with open('$f') as fh:
+              content = fh.read()
+              # Strip JSONC comments
+              content = re.sub(r'//.*$', '', content, flags=re.MULTILINE)
+              content = re.sub(r'/\*.*?\*/', '', content, flags=re.DOTALL)
+              try:
+                  json.loads(content)
+                  print(f'OK: $f')
+              except json.JSONDecodeError as e:
+                  print(f'ERROR: $f - {e}')
+                  sys.exit(1)
+          " || true
+          done
+
+      - name: Validate systemd service files
+        run: |
+          for service in services/systemd/*.service; do
+            if grep -q '\[Unit\]' "$service" && grep -q '\[Service\]' "$service"; then
+              echo "OK: $service"
+            else
+              echo "INVALID: $service"
+            fi
+          done
+
+      - name: Check project structure
+        run: |
+          echo "Checking required directories..."
+          for dir in iso orchestrator ai-agents self-evolve cloud services ui docs scripts; do
+            if [ -d "$dir" ]; then
+              echo "OK: $dir/"
+            else
+              echo "MISSING: $dir/"
+            fi
+          done
+
+  build-iso:
+    name: Build Gemini OS ISO
+    runs-on: ubuntu-latest
+    needs: lint-and-validate
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build ISO in Arch Linux container
+        run: |
+          docker run --privileged -v ${{ github.workspace }}:/workspace archlinux:latest /bin/bash -c "
+            pacman -Syu --noconfirm && \
+            pacman -S --needed --noconfirm archiso git base-devel && \
+            mkdir -p /tmp/archiso && \
+            cp -r /usr/share/archiso/configs/releng/ /tmp/archiso/profile && \
+            chmod +x /workspace/setup_profile.sh && \
+            /workspace/setup_profile.sh /tmp/archiso/profile && \
+            mkarchiso -v -w /tmp/archiso/work -o /workspace/out /tmp/archiso/profile
+          "
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GeminiOS-Live-Installer
+          path: out/*.iso
+          retention-days: 7

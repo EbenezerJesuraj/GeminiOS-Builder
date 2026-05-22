@@ -1,0 +1,103 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 38,
+    "margin-top": 6,
+    "margin-left": 12,
+    "margin-right": 12,
+    "spacing": 0,
+
+    "modules-left": [
+        "custom/gemini-logo",
+        "hyprland/workspaces",
+        "custom/ai-status"
+    ],
+
+    "modules-center": [
+        "clock"
+    ],
+
+    "modules-right": [
+        "custom/mo365",
+        "pulseaudio",
+        "network",
+        "battery",
+        "custom/ai-battery",
+        "tray"
+    ],
+
+    "custom/gemini-logo": {
+        "format": " Gemini OS",
+        "tooltip": true,
+        "tooltip-format": "Gemini OS — AI-Native Operating System",
+        "on-click": "/usr/local/bin/gemini-shell-toggle"
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "persistent-workspaces": {
+            "*": 5
+        },
+        "format-icons": {
+            "1": "I",
+            "2": "II",
+            "3": "III",
+            "4": "IV",
+            "5": "V"
+        }
+    },
+
+    "custom/ai-status": {
+        "exec": "/usr/local/bin/gemini-ai-status",
+        "interval": 5,
+        "format": "AI: {}",
+        "tooltip": true
+    },
+
+    "clock": {
+        "format": "{:%a %b %d  %I:%M %p}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    "custom/mo365": {
+        "format": "M365",
+        "tooltip": true,
+        "tooltip-format": "Open Microsoft 365 Apps",
+        "on-click": "/usr/local/bin/gemini-mo365-launcher"
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "MUTE",
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    },
+
+    "network": {
+        "format-wifi": "  {signalStrength}%",
+        "format-ethernet": "  {ipaddr}",
+        "format-disconnected": "  Off",
+        "tooltip-format": "{ifname}: {ipaddr}"
+    },
+
+    "battery": {
+        "format": "BAT {capacity}%",
+        "format-charging": "CHG {capacity}%",
+        "format-full": "FULL",
+        "states": {
+            "warning": 25,
+            "critical": 10
+        }
+    },
+
+    "custom/ai-battery": {
+        "exec": "/usr/local/bin/gemini-battery-status",
+        "interval": 30,
+        "format": "{}",
+        "tooltip": true
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}
