@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Cpu, HardDrive, Wifi, Battery, Sparkles, Clock } from "lucide-react";
+import { Cpu, HardDrive, Wifi, Battery, Sparkles } from "lucide-react";
 
 interface SystemStatus {
   agents: Record<string, boolean>;

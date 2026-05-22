@@ -43,8 +43,15 @@ function MO365Hub() {
             whileHover={{ scale: 1.04, y: -4 }}
             whileTap={{ scale: 0.97 }}
           >
-            <app.icon size={28} style={{ color: app.color }} />
-            <h3>{app.name}</h3>
+            <div style={{
+              width: 48, height: 48, borderRadius: 16,
+              background: `${app.color}18`, display: "flex",
+              alignItems: "center", justifyContent: "center",
+              position: "relative", zIndex: 1,
+            }}>
+              <app.icon size={24} style={{ color: app.color }} />
+            </div>
+            <h3 style={{ position: "relative", zIndex: 1 }}>{app.name}</h3>
             <p>Open in webapp mode</p>
           </motion.div>
         ))}

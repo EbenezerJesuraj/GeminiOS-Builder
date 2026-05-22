@@ -9,10 +9,10 @@ interface Message {
 }
 
 const suggestions = [
-  { icon: Zap, label: "Optimize system performance" },
-  { icon: Brain, label: "Summarize open documents" },
-  { icon: Image, label: "Generate a wallpaper" },
-  { icon: Code, label: "Write a Python script" },
+  { icon: Zap, label: "Optimize system performance", color: "#FBBC04" },
+  { icon: Brain, label: "Summarize open documents", color: "#A142F4" },
+  { icon: Image, label: "Generate a wallpaper", color: "#EA4335" },
+  { icon: Code, label: "Write a Python script", color: "#34A853" },
 ];
 
 /* Apple-style spring: slightly bouncy, smooth deceleration */
@@ -141,8 +141,9 @@ function GeminiOverlay({ onClose }: GeminiOverlayProps) {
                     transition={{ ...appleSpring, delay: 0.35 + i * 0.06 }}
                     whileHover={{ scale: 1.06, y: -2 }}
                     whileTap={{ scale: 0.95 }}
+                    style={{ borderColor: `${s.color}40`, color: s.color }}
                   >
-                    <s.icon size={14} /> {s.label}
+                    <s.icon size={14} /> <span style={{ color: "var(--on-surface)" }}>{s.label}</span>
                   </motion.button>
                 ))}
               </div>

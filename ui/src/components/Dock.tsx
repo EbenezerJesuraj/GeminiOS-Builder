@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 
 const dockApps = [
-  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4", bg: "rgba(66,133,244,0.12)" },
-  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853", bg: "rgba(52,168,83,0.12)" },
-  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4", bg: "rgba(161,66,244,0.12)" },
-  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04", bg: "rgba(251,188,4,0.14)" },
-  { path: "/agents", icon: Bot, label: "Agents", color: "#4285F4", bg: "rgba(66,133,244,0.12)" },
-  { path: "/evolve", icon: Dna, label: "Evolve", color: "#EA4335", bg: "rgba(234,67,53,0.12)" },
-  { path: "/settings", icon: Settings, label: "Settings", color: "#9C8872", bg: "rgba(156,136,114,0.10)" },
+  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4", bg: "rgba(66,133,244,0.15)" },
+  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853", bg: "rgba(52,168,83,0.15)" },
+  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4", bg: "rgba(161,66,244,0.15)" },
+  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04", bg: "rgba(251,188,4,0.18)" },
+  { path: "/agents", icon: Bot, label: "Agents", color: "#EA4335", bg: "rgba(234,67,53,0.15)" },
+  { path: "/evolve", icon: Dna, label: "Evolve", color: "#FF6D00", bg: "rgba(255,109,0,0.15)" },
+  { path: "/settings", icon: Settings, label: "Settings", color: "#00897B", bg: "rgba(0,137,123,0.12)" },
 ];
 
 const ICON_SIZE = 48;

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 
 interface WeatherData {
   temperature: number;
@@ -70,6 +70,8 @@ const gradientMap: Record<string, Record<string, string>> = {
 function DynamicWallpaper() {
   const [weather, setWeather] = useState<WeatherData>({ temperature: 22, weatherCode: 0, condition: "clear" });
   const timeOfDay = getTimeOfDay();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -96,43 +98,141 @@ function DynamicWallpaper() {
   const gradient = gradientMap[weather.condition]?.[timeOfDay] ?? gradientMap.clear.night;
   const emoji = weatherEmojis[weather.condition] ?? "☀️";
 
-  // 3D orbs with parallax depth
-  const orbs = useMemo(() => {
-    const colors = ["#FFB74D", "#F48FB1", "#81D4FA", "#FFCC80", "#A5D6A7", "#CE93D8", "#80DEEA"];
-    return Array.from({ length: 7 }, (_, i) => ({
-      color: colors[i],
-      size: 200 + Math.random() * 300,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      duration: 18 + Math.random() * 20,
-      delay: i * 2.5,
-      opacity: 0.12 + Math.random() * 0.12,
-    }));
+  // Live canvas animation — aurora waves, bokeh, light rays
+  const animate = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const W = canvas.width = window.innerWidth;
+    const H = canvas.height = window.innerHeight;
+    const t = Date.now() * 0.001;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Aurora wave layers
+    const auroraColors = [
+      "rgba(255,183,77,0.06)",   // amber
+      "rgba(244,143,177,0.05)",  // pink
+      "rgba(129,212,250,0.05)",  // blue
+      "rgba(206,147,216,0.04)",  // purple
+      "rgba(165,214,167,0.04)",  // green
+    ];
+    for (let layer = 0; layer < auroraColors.length; layer++) {
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      const speed = 0.3 + layer * 0.15;
+      const amp = 60 + layer * 25;
+      const yBase = H * (0.25 + layer * 0.12);
+      for (let x = 0; x <= W; x += 4) {
+        const y = yBase
+          + Math.sin(x * 0.003 + t * speed) * amp
+          + Math.sin(x * 0.007 - t * speed * 0.7) * (amp * 0.5)
+          + Math.cos(x * 0.002 + t * speed * 0.4) * (amp * 0.3);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      ctx.fillStyle = auroraColors[layer];
+      ctx.fill();
+    }
+
+    // Light rays from top-right
+    const rayCount = 6;
+    for (let i = 0; i < rayCount; i++) {
+      const angle = -0.3 + i * 0.12 + Math.sin(t * 0.2 + i) * 0.05;
+      const rayLen = H * 1.5;
+      const originX = W * 0.85;
+      const originY = -H * 0.1;
+      const spread = 0.04 + Math.sin(t * 0.3 + i * 2) * 0.015;
+
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(
+        originX + Math.cos(angle - spread) * rayLen,
+        originY + Math.sin(angle - spread) * rayLen
+      );
+      ctx.lineTo(
+        originX + Math.cos(angle + spread) * rayLen,
+        originY + Math.sin(angle + spread) * rayLen
+      );
+      ctx.closePath();
+      const rayOpacity = 0.015 + Math.sin(t * 0.5 + i * 1.5) * 0.008;
+      ctx.fillStyle = `rgba(255,220,160,${rayOpacity})`;
+      ctx.fill();
+    }
+
+    // Floating bokeh circles
+    for (let i = 0; i < 18; i++) {
+      const bx = (Math.sin(t * 0.15 + i * 1.7) * 0.3 + 0.5 + i * 0.05) * W % W;
+      const by = (Math.cos(t * 0.12 + i * 2.3) * 0.3 + 0.5 + i * 0.04) * H % H;
+      const bSize = 30 + Math.sin(t * 0.4 + i) * 15 + i * 4;
+      const bOpacity = 0.02 + Math.sin(t * 0.3 + i * 0.8) * 0.012;
+
+      const bokehColors = [
+        `rgba(255,183,77,${bOpacity})`,
+        `rgba(244,143,177,${bOpacity})`,
+        `rgba(129,212,250,${bOpacity})`,
+        `rgba(255,204,128,${bOpacity})`,
+        `rgba(206,147,216,${bOpacity})`,
+        `rgba(165,214,167,${bOpacity})`,
+      ];
+
+      const grad = ctx.createRadialGradient(bx, by, 0, bx, by, bSize);
+      grad.addColorStop(0, bokehColors[i % bokehColors.length]);
+      grad.addColorStop(1, "transparent");
+      ctx.beginPath();
+      ctx.arc(bx, by, bSize, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    // Subtle flowing noise dots (firefly-like)
+    for (let i = 0; i < 40; i++) {
+      const fx = (Math.sin(t * 0.08 + i * 3.14) * 0.4 + 0.5 + Math.cos(i * 7.7) * 0.4) * W % W;
+      const fy = (Math.cos(t * 0.06 + i * 2.71) * 0.4 + 0.5 + Math.sin(i * 5.5) * 0.3) * H % H;
+      const fOpacity = 0.08 + Math.sin(t * 0.7 + i * 1.2) * 0.06;
+      const fSize = 1.5 + Math.sin(t * 0.5 + i) * 0.8;
+
+      ctx.beginPath();
+      ctx.arc(fx, fy, fSize, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200,160,100,${fOpacity})`;
+      ctx.fill();
+    }
+
+    animRef.current = requestAnimationFrame(animate);
   }, []);
 
-  // 3D particles
-  const particles = useMemo(() =>
-    Array.from({ length: 30 }, (_, i) => ({
-      x: Math.random() * 100,
-      size: 1.5 + Math.random() * 2.5,
-      duration: 8 + Math.random() * 12,
-      delay: Math.random() * 10,
-      opacity: 0.15 + Math.random() * 0.35,
-    })),
-    []
-  );
+  useEffect(() => {
+    animRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [animate]);
 
-  // Weather particles
+  // Handle canvas resize
+  useEffect(() => {
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Weather particles (rain/snow)
   const weatherParticles = useMemo(() => {
     if (weather.condition === "rain") {
-      return Array.from({ length: 60 }, (_, i) => ({
+      return Array.from({ length: 60 }, () => ({
         x: Math.random() * 100,
         duration: 0.6 + Math.random() * 0.6,
         delay: Math.random() * 2,
       }));
     }
     if (weather.condition === "snow") {
-      return Array.from({ length: 40 }, (_, i) => ({
+      return Array.from({ length: 40 }, () => ({
         x: Math.random() * 100,
         duration: 4 + Math.random() * 6,
         delay: Math.random() * 5,
@@ -147,45 +247,20 @@ function DynamicWallpaper() {
         {/* Base gradient */}
         <div className="wallpaper-gradient" style={{ background: gradient }} />
 
-        {/* Animated mesh */}
+        {/* Live canvas — aurora waves, light rays, bokeh, fireflies */}
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* CSS animated mesh overlay */}
         <div className="wallpaper-mesh" />
-
-        {/* 3D floating orbs */}
-        <div className="wallpaper-orbs">
-          {orbs.map((orb, i) => (
-            <div
-              key={i}
-              className="wallpaper-orb"
-              style={{
-                width: orb.size,
-                height: orb.size,
-                left: `${orb.x}%`,
-                top: `${orb.y}%`,
-                background: `radial-gradient(circle, ${orb.color} 0%, transparent 70%)`,
-                opacity: orb.opacity,
-                animation: `mesh-drift ${orb.duration}s ease-in-out ${orb.delay}s infinite alternate`,
-              }}
-            />
-          ))}
-        </div>
-
-        {/* 3D particles */}
-        <div className="wallpaper-particles">
-          {particles.map((p, i) => (
-            <div
-              key={i}
-              className="particle"
-              style={{
-                left: `${p.x}%`,
-                width: p.size,
-                height: p.size,
-                animationDuration: `${p.duration}s`,
-                animationDelay: `${p.delay}s`,
-                opacity: p.opacity,
-              }}
-            />
-          ))}
-        </div>
 
         {/* Weather effects */}
         {weather.condition === "rain" && (
