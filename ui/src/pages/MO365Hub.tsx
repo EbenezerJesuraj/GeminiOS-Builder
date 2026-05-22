@@ -44,10 +44,13 @@ function MO365Hub() {
             whileTap={{ scale: 0.97 }}
           >
             <div style={{
-              width: 48, height: 48, borderRadius: 16,
-              background: `${app.color}18`, display: "flex",
+              width: 48, height: 48, borderRadius: "50%",
+              background: "rgba(255,255,255,0.10)",
+              border: "1px solid rgba(255,255,255,0.20)",
+              display: "flex",
               alignItems: "center", justifyContent: "center",
               position: "relative", zIndex: 1,
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.15)",
             }}>
               <app.icon size={24} style={{ color: app.color }} />
             </div>

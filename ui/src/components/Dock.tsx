@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 
 const dockApps = [
-  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4", bg: "rgba(66,133,244,0.15)" },
-  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853", bg: "rgba(52,168,83,0.15)" },
-  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4", bg: "rgba(161,66,244,0.15)" },
-  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04", bg: "rgba(251,188,4,0.18)" },
-  { path: "/agents", icon: Bot, label: "Agents", color: "#EA4335", bg: "rgba(234,67,53,0.15)" },
-  { path: "/evolve", icon: Dna, label: "Evolve", color: "#FF6D00", bg: "rgba(255,109,0,0.15)" },
-  { path: "/settings", icon: Settings, label: "Settings", color: "#00897B", bg: "rgba(0,137,123,0.12)" },
+  { path: "/", icon: LayoutDashboard, label: "Home", color: "#4285F4" },
+  { path: "/browser", icon: Globe, label: "Browser", color: "#34A853" },
+  { path: "/ide", icon: Code2, label: "IDE", color: "#A142F4" },
+  { path: "/mo365", icon: FileSpreadsheet, label: "M365", color: "#FBBC04" },
+  { path: "/agents", icon: Bot, label: "Agents", color: "#EA4335" },
+  { path: "/evolve", icon: Dna, label: "Evolve", color: "#FF6D00" },
+  { path: "/settings", icon: Settings, label: "Settings", color: "#00897B" },
 ];
 
 const ICON_SIZE = 48;
@@ -73,15 +73,15 @@ function DockItem({ app, isActive, mouseX, onClick, index }: DockItemProps) {
           width: size,
           height: size,
           willChange: "width, height, transform",
-          background: isActive ? `${app.color}20` : app.bg,
-          borderColor: isActive ? `${app.color}35` : "transparent",
-          boxShadow: isActive ? `0 0 16px ${app.color}18` : "none",
-          borderRadius: "var(--r-lg)",
+          background: isActive ? `${app.color}22` : "rgba(255,255,255,0.10)",
+          borderColor: isActive ? `${app.color}40` : "rgba(255,255,255,0.20)",
+          boxShadow: isActive ? `0 0 16px ${app.color}25, inset 0 1px 0 rgba(255,255,255,0.2)` : "inset 0 1px 0 rgba(255,255,255,0.15)",
+          borderRadius: "50%",
         }}
       >
         <app.icon
           size={22}
-          style={{ color: isActive ? app.color : "#6B5744" }}
+          style={{ color: isActive ? app.color : "rgba(255,255,255,0.8)" }}
         />
       </motion.div>
 
